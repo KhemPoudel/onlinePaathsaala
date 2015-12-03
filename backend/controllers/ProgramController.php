@@ -63,7 +63,7 @@ class ProgramController extends Controller
         $model = new ProgramRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['course/index', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\faculty\FacultyRecord */
 
-$this->title = 'Create Faculty Record';
+$this->title = "create faculty record";
 $this->params['breadcrumbs'][] = ['label' => 'Faculty Records', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

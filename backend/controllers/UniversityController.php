@@ -63,7 +63,9 @@ class UniversityController extends Controller
         $model = new UniversityRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+           // $dataProvider= $model->id;
+            return $this->redirect(['faculty/create'
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
