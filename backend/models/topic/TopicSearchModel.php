@@ -18,7 +18,7 @@ class TopicSearchModel extends TopicRecord
     public function rules()
     {
         return [
-            [['id', 'course_id', 'parent_id'], 'integer'],
+            [['id', 'course_id', 'parent_id', 'level'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -59,6 +59,7 @@ class TopicSearchModel extends TopicRecord
             'id' => $this->id,
             'course_id' => $this->course_id,
             'parent_id' => $this->parent_id,
+            'level' => $this->level,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);

@@ -3,7 +3,7 @@
 use yii\db\Schema;
 use yii\db\Migration;
 
-class m151125_104847_content extends Migration
+class m151213_042507_content extends Migration
 {
     public function up()
     {
@@ -20,6 +20,7 @@ class m151125_104847_content extends Migration
         ], $tableOptions);
         $this->addForeignKey('content_topic', 'content',
             'topic_id', 'topic', 'id','CASCADE','CASCADE');
+
     }
 
     public function down()

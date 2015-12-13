@@ -14,10 +14,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'program_id')->textInput() ?>
+    <?= $form->field($model, 'program_id')->textInput(['value'=>$program_id]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton('create',['create','id'=>$program_id],['class'=>'btn
+    btn-primary']) ?>
+    </div>
+    <div class="form-group">
+        <?= Html::a('back',['/course/back','id'=>$program_id],['class'=>'btn btn-primary'])?>
     </div>
 
     <?php ActiveForm::end(); ?>

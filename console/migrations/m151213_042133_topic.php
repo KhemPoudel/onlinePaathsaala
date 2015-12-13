@@ -3,7 +3,7 @@
 use yii\db\Schema;
 use yii\db\Migration;
 
-class m151125_104839_topic extends Migration
+class m151213_042133_topic extends Migration
 {
     public function up()
     {
@@ -17,10 +17,11 @@ class m151125_104839_topic extends Migration
             'name' => Schema::TYPE_STRING . ' NOT NULL',
             'course_id' => Schema::TYPE_INTEGER . ' NOT NULL',
             'parent_id'=>Schema::TYPE_INTEGER ,
+            'level'=>Schema::TYPE_INTEGER,
         ], $tableOptions);
         $this->addForeignKey('topic_course', 'topic',
             'course_id', 'course', 'id');
-;
+        ;
         $this->addForeignKey('parent', 'topic',
             'parent_id', 'topic', 'id','CASCADE','CASCADE');
 

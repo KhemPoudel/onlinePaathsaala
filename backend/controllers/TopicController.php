@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\controllers;
+namespace app\controllers;
 
 use Yii;
 use app\models\topic\TopicRecord;
@@ -63,7 +63,7 @@ class TopicController extends Controller
         $model = new TopicRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['content/index', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

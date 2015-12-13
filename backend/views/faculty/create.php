@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\faculty\FacultyRecord */
 
-$this->title = "create faculty record";
+$this->title ='faculty record';
 $this->params['breadcrumbs'][] = ['label' => 'Faculty Records', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'dataProvider'=>$dataProvider,
     ]) ?>
 
 </div>

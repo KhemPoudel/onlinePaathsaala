@@ -29,8 +29,33 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'faculty_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {course/create}{course/index}',
+
+                'buttons' => [
+
+
+                    'update' => function ($url,$model) {
+
+                        return Html::a(
+
+                            '<span class="glyphicon glyphicon-user"></span>',
+
+                            $url);
+
+                    },
+                    'course/create'=>function($url,$model)
+                    {
+                        return Html::a('<span class="btn btn-primary">add course</span>',$url);
+                    },
+
+                    'course/index'=>function($url,$model){
+                        return Html::a('<span class="btn btn-primary">courses</span>',$url);
+                    }
+
+                ],
+                ],
+    ],
     ]); ?>
 
 </div>
