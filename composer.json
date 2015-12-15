@@ -18,7 +18,9 @@
         "yiisoft/yii2": ">=2.0.4",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "yiisoft/yii2-gii": "*"
+        "yiisoft/yii2-gii": "*",
+        "dektrium/yii2-user": "1.0.*@dev",
+        "ext-intl" : "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -34,4 +36,5 @@
             "bower-asset-library": "vendor/bower"
         }
     }
+
 }
