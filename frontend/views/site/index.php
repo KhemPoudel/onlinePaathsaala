@@ -1,51 +1,73 @@
 <?php
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\LinkPager;
+use yii\bootstrap\Collapse;
+use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 $this->title = 'My Yii Application';
 ?>
-<div class="site-index">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
+<div class="body-content pull-left">
+    <?php
+    foreach($models as $model)
+    {
+        echo '
+        <div class="panel panel-default">
+                                 <div class="panel-heading"> <p><h4>',\dektrium\user\models\User::findOne(['id'=>$model->uploadedBy])->username,'</h4>added ',$model->name,'</p></div>
+                                  <div class="panel-body">';
 
-    <div class="body-content">
+        if($model->type=='video')
+        {
+            echo '
+                    <video id="video" width="640" height="480" poster="" controls>
+                        <source src=',Url::base() . '/assets/Uploads/' . $model->name,' type="video','/',$model->ext, '">
+                    </video>
+                </div>
+            ';
+        }
+        else{
+            echo
+            Html::a($model->name, Url::base() . '/assets/Uploads/' . $model->name,['title'=>$model->name,'target'=>'_blank']),
+            '<br/>
+            <object data=',Url::base() . '/assets/Uploads/' . $model->name,' type="application/pdf" width="640" height="480">
+                alt : <a href=',Url::base() . '/assets/Uploads/' . $model->name,'>',$model->name,'</a>
+</object>
+                </div>
+            ';
+        }
+        echo '<div class="clearfix"></div>';
+        echo '
+        <div id="likedislikediv">',
+            $this->render('_likedislike', array('model'=>$model))
+        ,'</div>
 
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
+        ';
+        //print_r($model->getLikesDislikes());
+foreach($model->getLikesDislikes() as $likes)
+{
+    //print_r($likes['type']);
+}
+echo Collapse::widget([
+    'items' => [
+        // equivalent to the above
+        [
+            'label' => 'View Discussions',
+            'content' => $this->context->getComments($model),
+            // open its content by default
+            'contentOptions' => ['class' => 'out'],
+        ],
+    ]
+]);
+       echo '</div>';
+    }
+    ?>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
 </div>
+
+<?php echo LinkPager::widget([
+'pagination' => $pages,
+]);
+?>
