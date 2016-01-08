@@ -2,7 +2,6 @@
 
 namespace common\models\content;
 
-use common\models\LikeDislikeContent;
 use Yii;
 
 /**
@@ -11,11 +10,8 @@ use Yii;
  * @property integer $id
  * @property string $name
  * @property integer $topic_id
- * @property string $type
- * @property string $ext
  *
  * @property Topic $topic
- * @property FollowerContent[] $followerContents
  */
 class ContentRecord extends \yii\db\ActiveRecord
 {
@@ -35,8 +31,7 @@ class ContentRecord extends \yii\db\ActiveRecord
         return [
             [['name', 'topic_id'], 'required'],
             [['topic_id'], 'integer'],
-            [['name'], 'string', 'max' => 255],
-            [['type', 'ext'], 'string', 'max' => 20]
+            [['name'], 'string', 'max' => 255]
         ];
     }
 
@@ -49,8 +44,6 @@ class ContentRecord extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'topic_id' => 'Topic ID',
-            'type' => 'Type',
-            'ext' => 'Ext',
         ];
     }
 
@@ -60,18 +53,5 @@ class ContentRecord extends \yii\db\ActiveRecord
     public function getTopic()
     {
         return $this->hasOne(Topic::className(), ['id' => 'topic_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFollowerPrograms()
-    {
-        return $this->hasMany(FollowerProgram::className(), ['program_id' => 'id']);
-    }
-
-    public function getLikesDislikes()
-    {
-        return $this->hasMany(LikeDislikeContent::className(), ['content' => 'id']);
     }
 }
