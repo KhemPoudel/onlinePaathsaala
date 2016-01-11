@@ -10,18 +10,23 @@ use yii\widgets\ActiveForm;
 
 <div class="topic-record-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options'=>['enctype'=>'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'course_id')->textInput() ?>
+    <?= $form->field($model, 'course_id')->textInput(['value'=>$course_id]) ?>
 
-    <?= $form->field($model, 'parent_id')->textInput() ?>
+    <?= $form->field($model, 'parent_id')->textInput(['value'=>$parent_id]) ?>
 
-    <?= $form->field($model, 'level')->textInput() ?>
+    <?= $form->field($model, 'level')->textInput(['value'=>$lvl ]) ?>
+
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    </div>
+    <div class="form-group">
+        <?= Html::a('back',['/topic/back','level'=>$lvl,'parent_id'=>$parent_id,'course_id'=>$course_id],['class'=>'btn btn-primary'])?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -16,7 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Topic Record', ['create'], ['class' => 'btn btn-success']) ?>
+
+        <?= Html::a('Main Topic', ['create','parent_id'=>"" ,'level'=>1,'course_id'=>$id], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -31,7 +32,40 @@ $this->params['breadcrumbs'][] = $this->title;
             'parent_id',
             'level',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {topic/provider}{topic/show}{content/upload}',
+
+                'buttons' => [
+
+
+                    'update' => function ($url,$model) {
+
+                        return Html::a(
+
+                            '<span class="glyphicon glyphicon-user"></span>',
+
+                            $url);
+
+                    },
+                    'topic/show'=>function($url,$model,$key)
+                    {
+
+                        return Html::a('<span class="btn btn-primary">sub topics</span>',$url);
+                    },
+                    'topic/provider'=>function($url,$model,$key)
+                    {
+
+                        return Html::a('<span class="btn btn-primary">create sub</span>',$url);
+                    },
+
+                    'content/upload'=>function($url)
+                    {
+                        return Html::a('<span class="btn btn-primary">add content</span>',$url);
+                    }
+
+
+                ],
+            ],
         ],
     ]); ?>
 

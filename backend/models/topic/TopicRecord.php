@@ -85,4 +85,7 @@ class TopicRecord extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Course::className(), ['id' => 'course_id']);
     }
+    public function previousLvl($id)
+    {
+    }
 }

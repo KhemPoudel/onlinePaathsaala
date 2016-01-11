@@ -8,6 +8,8 @@ use app\models\content\ContentSearchModel;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+
 
 /**
  * ContentController implements the CRUD actions for ContentRecord model.
@@ -30,6 +32,12 @@ class ContentController extends Controller
      * Lists all ContentRecord models.
      * @return mixed
      */
+    public function actionUpload($id)
+    {
+        return $this->render('upload',[
+            'id'=>$id,
+        ]);
+    }
     public function actionIndex()
     {
         $searchModel = new ContentSearchModel();
@@ -58,15 +66,27 @@ class ContentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($label,$id)
     {
         $model = new ContentRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $imageName=$model->name;
+            //get the instance of uploaded file
+
+            $model->$label=UploadedFile::getInstance($model,$label);
+            $model->$label->saveAs('uploads/'.$imageName.'.'.$model->$label->extension);
+// save the path in db
+            $model->address='uploads/'.$imageName.'.'.$model->$label->extension;
+            $model->save();
+
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'label'=>$label,
+                'topic_id'=>$id,
             ]);
         }
     }

@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'program_id',
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete} {topic/create}',
+                'template' => '{view} {update} {delete} {topic/index}',
 
                 'buttons' => [
 
@@ -44,9 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             $url);
 
                     },
-                    'topic/create'=>function($url,$model)
+                    'topic/index'=>function($url,$model,$key)
                     {
-                        return Html::a('<span class="btn btn-primary">add topic</span>',$url);
+
+                        return Html::a('<span class="btn btn-primary">topics</span>',$url);
                     },
 
 

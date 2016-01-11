@@ -16,6 +16,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'parent_id'=>$parent_id,
+       'lvl'=>$level,
+        'course_id'=>$course_id,
+
     ]) ?>
 
 </div>
