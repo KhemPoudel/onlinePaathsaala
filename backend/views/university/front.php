@@ -1,7 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: john
- * Date: 1/12/16
- * Time: 12:30 PM
- */
+use yii\helpers\Html;
+?>
+<div>
+    <?= Html::a('Universities', ['index'], ['class' => 'btn btn-success']) ?>
+    <?= Html::a('upload Content', ['/contents/index'], ['class' => 'btn btn-success']) ?>
+</div>

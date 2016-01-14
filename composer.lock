@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "39c13962d6a631487aea57e8408da18b",
-    "content-hash": "8d0cc176e8d2fa0108b8b74289b3efbe",
+    "hash": "464e70eb2f10512cc9db8ee46fb19208",
+    "content-hash": "64bab39852f7d4d0563a3ccf0b2ba505",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -819,16 +819,16 @@
         },
         {
             "name": "kartik-v/yii2-widget-depdrop",
-            "version": "v1.0.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-depdrop.git",
-                "reference": "3ede2f96c04b93398c9c241a531eb281638caeb9"
+                "reference": "6918ca6f7d7be153c80f6aa9c261f9b333293e9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-depdrop/zipball/3ede2f96c04b93398c9c241a531eb281638caeb9",
-                "reference": "3ede2f96c04b93398c9c241a531eb281638caeb9",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-depdrop/zipball/6918ca6f7d7be153c80f6aa9c261f9b333293e9c",
+                "reference": "6918ca6f7d7be153c80f6aa9c261f9b333293e9c",
                 "shasum": ""
             },
             "require": {
@@ -864,7 +864,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-12-16 19:33:49"
+            "time": "2016-01-10 17:30:48"
         },
         {
             "name": "kartik-v/yii2-widget-fileinput",
@@ -2035,7 +2035,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kartik-v/yii2-widget-depdrop": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

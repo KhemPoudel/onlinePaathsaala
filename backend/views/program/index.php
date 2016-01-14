@@ -8,6 +8,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Program Records';
+$this->params['breadcrumbs'][] = ['label' => $name->name, 'url' => ['faculty/index','id'=>$name->university_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-record-index">

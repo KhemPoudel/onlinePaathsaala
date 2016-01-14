@@ -39,10 +39,11 @@ class ProgramController extends Controller
     {
         $searchModel = new ProgramSearchModel();
         $dataProvider = $searchModel->search($id);
-
+        $name=FacultyRecord::findOne($id);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'name'=>$name,
         ]);
     }
 

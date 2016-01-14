@@ -33,7 +33,7 @@ elseif($label=='video'){
     echo $form->field($model, 'topic_id')->textInput(['value'=>$topic_id]);
     echo $form->field($model, $label)->widget(FileInput::classname(), [
         'options'=>['accept'=>$label.'/*'],
-        'pluginOptions'=>['allowedFileExtensions'=>['webm']]]);
+        'pluginOptions'=>['allowedFileExtensions'=>['mp4']]]);
 }
     ?>
     <div class="form-group">

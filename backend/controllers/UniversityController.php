@@ -30,6 +30,10 @@ class UniversityController extends Controller
      * Lists all UniversityRecord models.
      * @return mixed
      */
+    public function actionFront()
+    {
+        return $this->render('front');
+    }
     public function actionIndex()
     {
         $searchModel = new UniversitySearchModel();

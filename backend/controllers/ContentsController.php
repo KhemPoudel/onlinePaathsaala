@@ -1,7 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: john
- * Date: 1/13/16
- * Time: 5:45 PM
- */
+namespace backend\controllers;
+use Yii;
+use yii\base\Controller;
+use\yii\db\ActiveRecord;
+
+Class ContentsController extends Controller{
+public function actionIndex()
+{
+    return $this->render('index');
+}
+    public function actionChoose()
+    {
+        return $this->render('choose');
+    }
+}
+?>

@@ -33,7 +33,7 @@ class FacultyController extends Controller
      */
     public function actionIndex($id)
     {
-$data=$id;
+        $data=$id;
         $searchModel = new FacultySearchModel();
         $dataProvider = $searchModel->search($data);
 //$faculty_id=$dataProvider->id;
@@ -42,7 +42,7 @@ $data=$id;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-
+            'name'=>$name,
 
         ]);
     }
