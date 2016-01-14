@@ -32,7 +32,7 @@ class CommentsContent extends \yii\db\ActiveRecord
     {
         return [
             [['comment', 'commentedBy', 'commentedOn'], 'required'],
-            [['commentedBy', 'commentedOn'], 'integer'],
+            [['commentedBy', 'commentedOn', 'commentedAt'], 'integer'],
             [['comment'], 'string', 'max' => 255]
         ];
     }
@@ -47,6 +47,7 @@ class CommentsContent extends \yii\db\ActiveRecord
             'comment' => 'Comment',
             'commentedBy' => 'Commented By',
             'commentedOn' => 'Commented On',
+            'commentedAt' =>'Commented At'
         ];
     }
 
