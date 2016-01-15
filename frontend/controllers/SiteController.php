@@ -458,10 +458,10 @@ class SiteController extends Controller
             foreach($dislikerUsersIds as $dislikerUsersId)
             {
                 //$l2 is all Contents Liked By This User
-                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$dislikerUsersId])->all();
                 $l2=ArrayHelper::getColumn($likedByUser,'content');
                 //$d2 is all Contents Disliked By This User
-                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$dislikerUsersId])->all();
                 $d2=ArrayHelper::getColumn($dislikedByUser,'content');
 
                 $l1Intersectl2=count(array_intersect($l1,$l2));
