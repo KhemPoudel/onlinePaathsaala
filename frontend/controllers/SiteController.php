@@ -104,11 +104,12 @@ class SiteController extends Controller
             $models = $query->offset($pages->offset)
                 ->limit($pages->limit)
                 ->all();
+        $arr=$this->suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models);
         if(empty($models))
         {
             $models=$this->findSuggestions();
         }
-        return $this->render('index',['models'=>$models,'pages'=>$pages]);
+        return $this->render('index',['models'=>$models,'pages'=>$pages,'arr'=>$arr]);
     }
 
     public function actionLogin()
@@ -410,5 +411,76 @@ class SiteController extends Controller
             $file = $path . '/'.$filename;
             return $this->render('download',['file'=>$file]);
 
+    }
+
+    public function suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models)
+    {
+        $current_user=\Yii::$app->user->identity->getId();
+        $allModels=ContentRecord::find()->all();
+        $allModelsIds=ArrayHelper::getColumn($allModels,'id');
+        $modelsIds=ArrayHelper::getColumn($models,'id');
+        $modelsToBeComputedIds=array_diff($allModelsIds,$modelsIds);
+        //$l1 is all Contents Liked By Current User
+        $likedByCurrentUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$current_user])->all();
+        $l1=ArrayHelper::getColumn($likedByCurrentUser,'content');
+        //$d1 is all Contents Disliked By Current User
+        $dislikedByCurrentUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$current_user])->all();
+        $d1=ArrayHelper::getColumn($dislikedByCurrentUser,'content');
+        $arrayOfProbability=[];
+        foreach($modelsToBeComputedIds as $id)
+        {
+            $likedRecords=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'content'=>$id])->all();
+            $likerUsersIds=ArrayHelper::getColumn($likedRecords,'likedOrDislikedBy');//all users liking the content
+            $dislikedRecords=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'content'=>$id])->all();
+            $dislikerUsersIds=ArrayHelper::getColumn($dislikedRecords,'likedOrDislikedBy');//all users disliking the content
+            //zl is sum of similarities between likers and current user
+            $zl=0;
+            foreach($likerUsersIds as $likerUsersId)
+            {
+                //$l2 is all Contents Liked By This User
+                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $l2=ArrayHelper::getColumn($likedByUser,'content');
+                //$d2 is all Contents Disliked By This User
+                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $d2=ArrayHelper::getColumn($dislikedByUser,'content');
+                $l1Intersectl2=count(array_intersect($l1,$l2));
+                $d1Intersectd2=count(array_intersect($d1,$d2));
+                $l1Intersectd2=count(array_intersect($l1,$d2));
+                $l2Intersectd1=count(array_intersect($l2,$d1));
+                $l1Ul2Ud1Ud2=count(array_unique(array_merge($l1,$l2,$d1,$d2)));
+
+                //$s is similarity index Between Current User And This User
+                $s=($l1Intersectl2+$d1Intersectd2-$l1Intersectd2-$l2Intersectd1)/$l1Ul2Ud1Ud2;
+                $zl+=$s;
+            }
+            //zd is sum of similarities between dislikers and current user
+            $zd=0;
+            foreach($dislikerUsersIds as $dislikerUsersId)
+            {
+                //$l2 is all Contents Liked By This User
+                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$dislikerUsersId])->all();
+                $l2=ArrayHelper::getColumn($likedByUser,'content');
+                //$d2 is all Contents Disliked By This User
+                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$dislikerUsersId])->all();
+                $d2=ArrayHelper::getColumn($dislikedByUser,'content');
+
+                $l1Intersectl2=count(array_intersect($l1,$l2));
+                $d1Intersectd2=count(array_intersect($d1,$d2));
+                $l1Intersectd2=count(array_intersect($l1,$d2));
+                $l2Intersectd1=count(array_intersect($l2,$d1));
+                $l1Ul2Ud1Ud2=count(array_unique(array_merge($l1,$l2,$d1,$d2)));
+
+                //$s is similarity index Between Current User And This User
+                $s=($l1Intersectl2+$d1Intersectd2-$l1Intersectd2-$l2Intersectd1)/$l1Ul2Ud1Ud2;
+                $zd+=$s;
+            }
+            $totalCount=count($likerUsersIds)+count($dislikerUsersIds);
+            if($totalCount==0)
+                $p=-100;
+            else
+                $p=($zl-$zd)/$totalCount;
+            $arrayOfProbability[$id]=$p;
+        }
+        return $arrayOfProbability;
     }
 }

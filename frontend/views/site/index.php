@@ -6,6 +6,7 @@ use yii\bootstrap\Collapse;
 use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 $this->title = 'Timeline';
+print_r($arr);
 ?>
 
     <?php
