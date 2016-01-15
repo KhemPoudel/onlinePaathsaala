@@ -32,7 +32,7 @@ class FacultyController extends Controller
      */
     public function actionIndex($university_id)
     {
-        $model=FacultyRecord::findAll(['university_id'=>$university_id]);
-        return $this->render('index',['model'=>$model]);
+        $models=FacultyRecord::findAll(['university_id'=>$university_id]);
+        return $this->render('index',['models'=>$models,'university_id'=>$university_id]);
     }
 }

@@ -3,6 +3,7 @@
 namespace common\models\program;
 
 use Yii;
+use common\models\faculty\FacultyRecord;
 
 /**
  * This is the model class for table "program".
