@@ -29,7 +29,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'program_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {topic/index}',
+
+                'buttons' => [
+
+
+                    'update' => function ($url,$model) {
+
+                        return Html::a(
+
+                            '<span class="glyphicon glyphicon-user"></span>',
+
+                            $url);
+
+                    },
+                    'topic/index'=>function($url,$model,$key)
+                    {
+
+                        return Html::a('<span class="btn btn-primary">topics</span>',$url);
+                    },
+
+
+
+                ],
+            ],
         ],
     ]); ?>
 

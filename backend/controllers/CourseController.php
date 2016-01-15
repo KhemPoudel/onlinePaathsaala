@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use app\models\program\ProgramRecord;
 use Yii;
 use app\models\course\CourseRecord;
 use app\models\course\CourseSearchModel;
@@ -30,10 +31,10 @@ class CourseController extends Controller
      * Lists all CourseRecord models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
         $searchModel = new CourseSearchModel();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -58,19 +59,25 @@ class CourseController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
         $model = new CourseRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['topic/index', 'id' => $model->id]);
+            return $this->redirect(['create', 'id' => $id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'id'=>$id,
             ]);
         }
     }
-
+    public function actionBack($id)
+    {
+        $model=ProgramRecord::findOne($id);
+        $faculty_id=$model->faculty_id;
+        return $this->redirect(['program/index','id'=>$faculty_id]);
+    }
     /**
      * Updates an existing CourseRecord model.
      * If update is successful, the browser will be redirected to the 'view' page.

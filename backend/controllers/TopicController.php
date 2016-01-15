@@ -30,14 +30,15 @@ class TopicController extends Controller
      * Lists all TopicRecord models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
         $searchModel = new TopicSearchModel();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+           'id'=>$id,
         ]);
     }
 
@@ -53,20 +54,37 @@ class TopicController extends Controller
         ]);
     }
 
+public function actionProvider($id)
+{
+    $model=TopicRecord::findOne($id);
+    $level=$model->level;
+   $level++;
+    $course_id=$model->course_id;
+    return $this->redirect(['create',
+        'parent_id'=>$id,
+        'level'=>$level,
+        'course_id'=>$course_id,
+    ]);
+}
     /**
      * Creates a new TopicRecord model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($parent_id,$level,$course_id)
     {
         $model = new TopicRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['content/index', 'id' => $model->id]);
+            return $this->redirect(['create','parent_id'=>$parent_id,'level'=>$level,'course_id'=>$course_id]);
         } else {
+
             return $this->render('create', [
                 'model' => $model,
+                'parent_id'=>$parent_id,
+                'level'=>$level,
+                'course_id'=>$course_id,
+
             ]);
         }
     }
@@ -89,6 +107,61 @@ class TopicController extends Controller
             ]);
         }
     }
+    public function actionBack($level,$parent_id,$course_id)
+    {
+        if($level<=2)
+        {
+            $this->redirect(['top','course_id'=>$course_id]);
+        }
+        else
+        {
+            $level--;
+
+            $this->redirect(['sub','level'=>$level,'par'=>$parent_id,'course_id'=>$course_id]);
+        }
+    }
+    public function actionSub($level,$par,$course_id)
+    {
+        $searchModel = new TopicSearchModel();
+        $id=$par;
+        $model=TopicRecord::findOne($id);
+        $parent_id=$model->parent_id;
+        $dataProvider = $searchModel->subSearch($level,$parent_id);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'id'=>$course_id,
+
+        ]);
+
+    }
+    public function actionTop($course_id)
+    {
+        $searchModel = new TopicSearchModel();
+        $dataProvider = $searchModel->topSearch($course_id);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'id'=>$course_id,
+
+        ]);
+    }
+    public function  actionShow($id)
+{
+    $searchModel = new TopicSearchModel();
+    $dataProvider = $searchModel->topicSearch($id);
+    $model=TopicRecord::findOne($id);
+    $course_id=$model->course_id;
+
+    return $this->render('index', [
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
+        'id'=>$course_id,
+
+    ]);
+}
 
     /**
      * Deletes an existing TopicRecord model.

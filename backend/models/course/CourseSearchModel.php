@@ -39,29 +39,15 @@ class CourseSearchModel extends CourseRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($id)
     {
-        $query = CourseRecord::find();
+        $query = CourseRecord::find()->where(['program_id' => $id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'program_id' => $this->program_id,
-        ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name]);
-
         return $dataProvider;
+
+
     }
 }

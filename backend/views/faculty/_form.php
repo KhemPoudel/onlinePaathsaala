@@ -16,12 +16,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'level')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'university_id')->textInput() ?>
+    <?= $form->field($model, 'university_id')->textInput(['value'=>$dataProvider]) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
-
+<div class="form-group">
+    <?= Html::a('done',['/faculty/next','dataProvider'=>$dataProvider],['class'=>'btn btn-primary'])?>
+</div>
     <?php ActiveForm::end(); ?>
 
 </div>

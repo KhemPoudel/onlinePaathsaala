@@ -26,12 +26,21 @@ class ContentRecord extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public $pdf;
+    public $image;
+    public $video;
+    public $file;
     public function rules()
     {
         return [
             [['name', 'topic_id'], 'required'],
             [['topic_id'], 'integer'],
-            [['name'], 'string', 'max' => 255]
+            [['pdf'],'file'],
+            [['image'],'file'],
+            [['video'],'file'],
+            [['file'],'file'],
+            [['name'], 'string', 'max' => 255],
+            [['address'],'string','max'=>400]
         ];
     }
 

@@ -39,30 +39,13 @@ class FacultySearchModel extends FacultyRecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($data)
     {
-        $query = FacultyRecord::find();
+        $query=FacultyRecord::find()->where(['university_id'=>$data]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'university_id' => $this->university_id,
-        ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'level', $this->level]);
-
         return $dataProvider;
     }
 }

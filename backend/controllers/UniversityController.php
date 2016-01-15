@@ -44,6 +44,10 @@ class UniversityController extends Controller
      * Lists all UniversityRecord models.
      * @return mixed
      */
+    public function actionFront()
+    {
+        return $this->render('front');
+    }
     public function actionIndex()
     {
         $searchModel = new UniversitySearchModel();
@@ -77,8 +81,8 @@ class UniversityController extends Controller
         $model = new UniversityRecord();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-           // $dataProvider= $model->id;
-            return $this->redirect(['faculty/create'
+           $dataProvider= $model->id;
+            return $this->redirect(['faculty/create','id'=>$dataProvider
             ]);
         } else {
             return $this->render('create', [
