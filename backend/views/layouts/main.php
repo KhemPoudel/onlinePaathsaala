@@ -31,23 +31,25 @@ AppAsset::register($this);
                     'class' => 'navbar-inverse navbar-fixed-top',
                 ],
             ]);
-            $menuItems = [
-                ['label' => 'Home', 'url' => ['/university/front']],
-            ];
-            if (Yii::$app->user->isGuest) {
-                $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-            } else {
-                $menuItems[] = [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+
+        $navItems=[
+            ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Status', 'url' => ['/status/index']],
+            ['label' => 'About', 'url' => ['/site/about']],
+            ['label' => 'Contact', 'url' => ['/site/contact']]
+        ];
+        if (Yii::$app->user->isGuest) {
+            array_push($navItems,['label' => 'Sign In', 'url' => ['/user/login']],['label' => 'Sign Up', 'url' => ['/user/register']]);
+        } else {
+            array_push($navItems,['label' => 'Logout (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ];
-            }
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => $menuItems,
-            ]);
-            NavBar::end();
+                    'linkOptions' => ['data-method' => 'post']]
+            );
+        }
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav navbar-right'],
+            'items' => $navItems,
+        ]);
         ?>
 
         <div class="container">

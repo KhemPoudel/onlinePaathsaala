@@ -8,6 +8,7 @@ use app\models\university\UniversitySearchModel;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * UniversityController implements the CRUD actions for UniversityRecord model.
@@ -23,6 +24,19 @@ class UniversityController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete', 'block', 'confirm'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->user->identity->getIsAdmin();
+                        }
+                    ],
+                ]
+            ]
         ];
     }
 
