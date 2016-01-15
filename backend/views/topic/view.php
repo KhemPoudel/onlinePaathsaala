@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'course_id',
             'parent_id',
+            'level',
         ],
     ]) ?>
 

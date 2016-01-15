@@ -24,6 +24,14 @@ AppAsset::register($this);
     <?php $this->beginBody() ?>
     <div class="wrap">
         <?php
+            NavBar::begin([
+                'brandLabel' => 'My Company',
+                'brandUrl' => Yii::$app->homeUrl,
+                'options' => [
+                    'class' => 'navbar-inverse navbar-fixed-top',
+                ],
+            ]);
+
         $navItems=[
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Status', 'url' => ['/status/index']],

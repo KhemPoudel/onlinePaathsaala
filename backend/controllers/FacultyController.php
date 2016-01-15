@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use app\models\university\UniversityRecord;
 use Yii;
 use app\models\faculty\FacultyRecord;
 use app\models\faculty\FacultySearchModel;
@@ -30,14 +31,19 @@ class FacultyController extends Controller
      * Lists all FacultyRecord models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
+        $data=$id;
         $searchModel = new FacultySearchModel();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($data);
+//$faculty_id=$dataProvider->id;
+        $name=UniversityRecord::findOne($data);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'name'=>$name,
+
         ]);
     }
 
@@ -58,17 +64,29 @@ class FacultyController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+
+    public function actionCreate($id)
     {
         $model = new FacultyRecord();
+$dataProvider=$id;
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['program/index', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+        return $this->redirect(['create', 'id' => $id,
+            'dataProvider' => $dataProvider]);
+    } else {
+        //$dataProvider='1';
+        return $this->render('create', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+
+        ]);
+    }
+
+    }
+    public function actionNext($dataProvider)
+    {
+        $id=$dataProvider;
+        return $this->redirect(['faculty/index','id'=>$id]);
     }
 
     /**

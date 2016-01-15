@@ -8,6 +8,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Program Records';
+$this->params['breadcrumbs'][] = ['label' => $name->name, 'url' => ['faculty/index','id'=>$name->university_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-record-index">
@@ -29,8 +30,33 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'faculty_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {course/create}{course/index}',
+
+                'buttons' => [
+
+
+                    'update' => function ($url,$model) {
+
+                        return Html::a(
+
+                            '<span class="glyphicon glyphicon-user"></span>',
+
+                            $url);
+
+                    },
+                    'course/create'=>function($url,$model)
+                    {
+                        return Html::a('<span class="btn btn-primary">add course</span>',$url);
+                    },
+
+                    'course/index'=>function($url,$model){
+                        return Html::a('<span class="btn btn-primary">courses</span>',$url);
+                    }
+
+                ],
+                ],
+    ],
     ]); ?>
 
 </div>

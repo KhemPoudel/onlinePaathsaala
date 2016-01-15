@@ -19,6 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-gii": "*",
+        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-widget-depdrop": "@dev",
         "dektrium/yii2-user": "1.0.*@dev",
         "ext-intl" : "*"
     },

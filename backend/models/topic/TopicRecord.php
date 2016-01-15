@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property integer $course_id
  * @property integer $parent_id
+ * @property integer $level
  *
  * @property Content[] $contents
  * @property TopicRecord $parent
@@ -34,7 +35,7 @@ class TopicRecord extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'course_id'], 'required'],
-            [['course_id', 'parent_id'], 'integer'],
+            [['course_id', 'parent_id', 'level'], 'integer'],
             [['name'], 'string', 'max' => 255]
         ];
     }
@@ -49,6 +50,7 @@ class TopicRecord extends \yii\db\ActiveRecord
             'name' => 'Name',
             'course_id' => 'Course ID',
             'parent_id' => 'Parent ID',
+            'level' => 'Level',
         ];
     }
 
@@ -82,5 +84,8 @@ class TopicRecord extends \yii\db\ActiveRecord
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'course_id']);
+    }
+    public function previousLvl($id)
+    {
     }
 }
