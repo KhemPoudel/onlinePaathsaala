@@ -50,6 +50,7 @@ AppAsset::register($this);
             'options' => ['class' => 'navbar-nav navbar-right'],
             'items' => $navItems,
         ]);
+        NavBar::end();
         ?>
 
         <div class="container">

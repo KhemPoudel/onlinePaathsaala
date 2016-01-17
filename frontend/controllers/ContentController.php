@@ -88,6 +88,12 @@ class ContentController extends Controller
         return $likes->count();
     }
 
+    public function getCommentsCount($model)
+    {
+        $comments=CommentsContent::find()->where(['commentedOn'=>$model->id]);
+        return $comments->count();
+    }
+
     public function IfLikedByUser($model)
     {
         $likeOrDislike=LikeDislikeContent::findOne(['content'=>$model->id,'likedOrDislikedBy'=>\Yii::$app->user->identity->getId()]);
@@ -198,6 +204,13 @@ class ContentController extends Controller
             return 1;
         else
             return 0;
+    }
+
+    public function actionDownload($filename)
+    {
+        $path = Yii::getAlias('@webroot') . '/assets/Uploads';
+        $file = $path . '/'.$filename;
+        return $this->render('download',['file'=>$file]);
     }
 }
 

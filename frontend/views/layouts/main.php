@@ -30,14 +30,16 @@ AppAsset::register($this);
                 'brandLabel' => '<i id="icon" class="fa fa-laptop" style="margin-top:-22px;text-shadow: rgb(55, 125, 179) 0px 0px 0px, rgb(58, 132, 188) 1px 1px 0px, rgb(61, 139, 198) 2px 2px 0px, rgb(64, 145, 207) 3px 3px 0px, rgb(67, 152, 217) 4px 4px 0px, rgb(70, 159, 226) 5px 5px 0px, rgb(73, 166, 236) 6px 6px 0px, rgb(76, 172, 245) 7px 7px 0px; font-size: 43px; color: rgb(0, 0, 0); height: 56px; width: 56px; line-height: 56px; border-radius: 49%; text-align: center; background-color: rgb(79, 179, 255);"></i>  Paathsaala',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
-                    'class' => 'navbar navbar-inverse navbar-fixed-top',
+                    'class' => 'navbar default-color navbar-fixed-top',
+                    'style'=>'z-index:11;'
                 ],
             ]);
         $navItems=[
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Profile', 'url' => ['/user/profile']],
             ['label' => 'Search', 'url' => ['/university/index']],
-            ['label' => 'Contact', 'url' => ['/site/contact']]
+            ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label'=>'Notifications'.Html::tag('span', '10', ['class' => 'label-danger']), 'url'=>['/site/contact']],
         ];
         if (Yii::$app->user->isGuest) {
             array_push($navItems,['label' => 'Sign In', 'url' => ['/user/security/login']],['label' => 'Sign Up', 'url' => ['/user/registration/register']]);
@@ -48,6 +50,7 @@ AppAsset::register($this);
             );
         }
         echo Nav::widget([
+            'encodeLabels' => false,
             'options' => ['class' => 'navbar-nav navbar-right'],
             'items' => $navItems,
         ]);
@@ -55,22 +58,15 @@ AppAsset::register($this);
         ?>
 
         <div class="container row">
-            <div class="col-md-9 pull-left" style="margin-top: 4%;">
+            <div class="col-md-10" style="margin-top: 1.3%;">
                 <?= $content ?>
             </div>
-            <div class="col-md-3 pull-right" style="margin-top: 4%;">
-                <?php if(isset($this->blocks['suggestion_block']))
-                {
-                    echo $this->blocks['suggestion_block'];
-                }
-                else
-                {
-                  echo 'fuck';
-                }
+            <div class="col-md-2" style="margin-top: 5.4%;position: fixed;margin-left: 74%;">
+                <?php
+                   echo $this->render('//site/_suggestions');
                 ?>
-                <div>
-                    <h5>sadad</h5>
-                </div>
+                <?php
+                ?>
             </div>
         </div>
     </div>
