@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models\content;
-
 use Yii;
 
 /**
