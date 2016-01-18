@@ -13,9 +13,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'faculty_id')->textInput(['value'=>$faculty_id]) ?>
-
+    
     <div class="form-group">
         <?= Html::submitButton('create',['create','id'=>$faculty_id],['class'=>'btn
     btn-primary']) ?>

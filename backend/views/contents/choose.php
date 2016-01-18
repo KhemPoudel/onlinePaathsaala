@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\widgets\DepDrop;
 use yii\helpers\ArrayHelper;
+use kartik\file\FileInput;
 
 
 
@@ -47,30 +48,53 @@ use yii\helpers\ArrayHelper;
 (ArrayHelper::map(app\models\course\CourseRecord::find()->all(),'id','name'),
     [
         'prompt'=>'select course',
+        'onchange'=>'
+        $.post("index.php?r=contents/topics&id='.'"+$(this).val(),function(data)
+        {
+        $("select#contentsrecord-topic").html(data);
+        });'
+
+    ]);?>
+
+<?= $form->field($model,'topic')->dropDownList
+(ArrayHelper::map(app\models\topic\TopicRecord::find()->all(),'id','name'),
+    [
+        'prompt'=>'select course',
+        'onchange'=>'
+        $.post("index.php?r=contents/submits&id='.'"+$(this).val());'
 
 
     ]);?>
-</div>
-<?php $form= ActiveForm::end(); ?>
-<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
+<?= $form->field($model,'topic_id')->textInput(['maxlength' => true])?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+<?php
+if($label=='image')
+{
 
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
-            </div>
-            <div class="modal-body">
-                <p>Some text in the modal.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+    echo $form->field($model, $label)->widget(FileInput::classname(), [
+        'options'=>['accept'=>$label.'/*'],
+        'pluginOptions'=>['allowedFileExtensions'=>['jpg','gif','png']]]);
+}
+elseif($label=='pdf'){
 
+    echo $form->field($model, $label)->widget(FileInput::classname(), [
+        'options'=>['accept'=>$label.'/*'],
+        'pluginOptions'=>['allowedFileExtensions'=>['pdf']]]);
+}
+elseif($label=='video'){
+
+    echo $form->field($model, $label)->widget(FileInput::classname(), [
+        'options'=>['accept'=>$label.'/*'],
+        'pluginOptions'=>['allowedFileExtensions'=>['mp4']]]);
+}
+?>
+
+    <div class="form-group">
+        <?= Html::submitButton('save',['choose','label'=>$label],['class'=>'btn btn-primary']) ?>
     </div>
+
+<?php $form= ActiveForm::end(); ?>
+
+    <?= Html::a('back',['/contents/store'],['class'=>'btn btn-primary'])?>
 </div>

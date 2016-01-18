@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\course\CourseRecord;
 use Yii;
 use app\models\topic\TopicRecord;
 use app\models\topic\TopicSearchModel;
@@ -34,14 +35,41 @@ class TopicController extends Controller
     {
         $searchModel = new TopicSearchModel();
         $dataProvider = $searchModel->search($id);
-
+        $model=CourseRecord::findOne($id);
+        $num=0;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
            'id'=>$id,
+            'model'=>$model,
+            'num'=>$num,
         ]);
     }
-
+public function actionInitial($num,$model)
+{
+if ($num!=2)
+{
+    $id=$model;
+    $course=CourseRecord::findOne($id);
+    $id=$course->program_id;
+    return $this->redirect(['/course/index', 'id' => $id,]) ;
+}
+    else
+    {
+        $id=$model;
+       $topic=TopicRecord::findOne($id);
+        if($topic->level==1)
+        {
+            $this->redirect(['index','id'=>$topic->course_id]);
+        }
+        else
+        {
+            $id=$model;
+            $topic=TopicRecord::findOne($id);
+            $this->redirect(['sub','level'=>$topic->level,'par'=>$id,'course_id'=>$topic->course_id]);
+        }
+    }
+}
     /**
      * Displays a single TopicRecord model.
      * @param integer $id
@@ -74,7 +102,8 @@ public function actionProvider($id)
     public function actionCreate($parent_id,$level,$course_id)
     {
         $model = new TopicRecord();
-
+        $model->parent_id=$parent_id;
+        $model->course_id=$course_id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['create','parent_id'=>$parent_id,'level'=>$level,'course_id'=>$course_id]);
         } else {
@@ -132,6 +161,8 @@ public function actionProvider($id)
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'id'=>$course_id,
+            'model'=>$model,
+            'num'=>2,
 
         ]);
 
@@ -140,11 +171,14 @@ public function actionProvider($id)
     {
         $searchModel = new TopicSearchModel();
         $dataProvider = $searchModel->topSearch($course_id);
-
+$id=$course_id;
+        $model=CourseRecord::findOne($id);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'id'=>$course_id,
+            'model'=>$model,
+            'num'=>1,
 
         ]);
     }
@@ -153,12 +187,15 @@ public function actionProvider($id)
     $searchModel = new TopicSearchModel();
     $dataProvider = $searchModel->topicSearch($id);
     $model=TopicRecord::findOne($id);
+
     $course_id=$model->course_id;
 
     return $this->render('index', [
         'searchModel' => $searchModel,
         'dataProvider' => $dataProvider,
         'id'=>$course_id,
+        'model'=>$model,
+        'num'=>2
 
     ]);
 }

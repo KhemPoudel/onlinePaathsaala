@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Program Record', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Program Record', ['create','id'=>$name->id], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'faculty_id',
+
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {update} {delete} {course/create}{course/index}',

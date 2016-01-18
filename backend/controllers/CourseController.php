@@ -35,10 +35,11 @@ class CourseController extends Controller
     {
         $searchModel = new CourseSearchModel();
         $dataProvider = $searchModel->search($id);
-
+        $name=ProgramRecord::findOne($id);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'name'=>$name,
         ]);
     }
 
@@ -62,7 +63,7 @@ class CourseController extends Controller
     public function actionCreate($id)
     {
         $model = new CourseRecord();
-
+        $model->program_id=$id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['create', 'id' => $id]);
         } else {

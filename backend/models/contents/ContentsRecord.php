@@ -3,6 +3,7 @@
 namespace app\models\contents;
 
 use Yii;
+use yii\base\Model;
 
 /**
  * This is the model class for table "course".
@@ -14,12 +15,18 @@ use Yii;
  * @property Program $program
  * @property Topic[] $topics
  */
-class ContentsRecord extends \yii\db\ActiveRecord
+class ContentsRecord extends Model
 {
    public $university;
     public $faculty;
     public $program;
     public $course;
     public $topic;
+    public $pdf;
+    public $image;
+    public $video;
+    public $file;
+    public $name;
+    public $topic_id;
 
 }
