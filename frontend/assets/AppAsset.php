@@ -25,11 +25,14 @@ class AppAsset extends AssetBundle
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
         'css/prisma.css',
+        'css/live.css',
+        'css/custom.css',
     ];
     public $js = [
         'js/thumbnail.js',
         'js/mdb.min.js',
         'js/bootstrap.min.js',
+        //'js/index.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

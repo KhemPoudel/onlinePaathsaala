@@ -28,6 +28,7 @@ use yii\db\ActiveQuery;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * ContentController implements the CRUD actions for ContentRecord model.
@@ -86,6 +87,12 @@ class ContentController extends Controller
     {
         $likes=LikeDislikeContent::find()->where(['content'=>$model->id,'likeOrDislike'=>0]);
         return $likes->count();
+    }
+
+    public function getCommentsCount($model)
+    {
+        $comments=CommentsContent::find()->where(['commentedOn'=>$model->id]);
+        return $comments->count();
     }
 
     public function IfLikedByUser($model)
@@ -198,6 +205,71 @@ class ContentController extends Controller
             return 1;
         else
             return 0;
+    }
+
+    public function actionDownload($filename)
+    {
+        $path = Yii::getAlias('@webroot') . '/assets/Uploads';
+        $file = $path . '/'.$filename;
+        return $this->render('download',['file'=>$file]);
+    }
+
+    public function actionUpload()
+    {
+        return $this->render('upload');
+    }
+
+    public function actionCreate()
+    {
+
+    if ( 0 < $_FILES['file']['error'] ) {
+        echo json_encode(['error'=>'error']);
+    }
+    if($_FILES['file']['size']>2000000)
+    {
+        echo json_encode(['error'=>'File size exceeded']);
+    }
+    else {
+        $ext = end((explode(".",$_FILES['file']['name'])));
+        if($ext=='mp4'||$ext='webm'||$ext='flv'||$ext='3gp')
+            $type='video';
+        elseif($ext=='pdf')
+            $type='pdf';
+        elseif($ext='jpeg'||$ext=='jpg'||$ext=='gif'||$ext=='png')
+            $type='img';
+        else
+        {
+            echo json_encode(['error'=>'Check file type']);
+            return;
+        }
+
+        $target=md5(uniqid());
+        if(move_uploaded_file($_FILES['file']['tmp_name'], 'assets/Uploads/' . $target.'.'.$ext)){
+            $model=new ContentRecord();
+            $model->name=$_FILES['file']['name'];
+            $model->ext=$ext;
+            $model->uploadedBy=\Yii::$app->user->identity->getId();
+            $model->type=$type;
+            $model->topic_id=9;
+            $model->address=$target.'.'.$ext;
+            $model->posted_at=time();
+            if(User::findOne($model->uploadedBy)->role==10)
+                $model->flag=-1;//pending for approval for user
+            else
+                $model->flag=1;//direct approved if teacher or admin
+            if($model->save())
+                echo json_encode(['error'=>'File successfully uploaded']);
+            else
+            {
+                unlink(getcwd().'/assets/Uploads/'.$target.'.'.$ext);
+                echo json_encode(['error'=>'Could not save file']);
+            }
+        }
+        else
+        {
+            echo json_encode(['error'=>'Could not upload file.']);
+        }
+    }
     }
 }
 

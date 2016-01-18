@@ -9,8 +9,8 @@
                     </div>
                     <div class="col-sm-10">
                         <a href="#">
-                            <h5 class="title"><?php echo \dektrium\user\models\User::findOne(['id'=>$model->commentedBy])->username;?>
-                            </h5>
+                            <h6 class="title"><?php echo \dektrium\user\models\User::findOne(['id'=>$model->commentedBy])->username;?>
+                            </h6>
                         </a>
                         <i class="fa fa-clock-o"><?=Yii::t('user', '{0, date}', $model->commentedAt)?></i>
                         <p>
@@ -21,7 +21,7 @@
             <?php }?>
     <div class="card-panel reply-section hoverable">
         <div class="row">
-            <h5 class="text-center">Leave a comment</h5>
+            <h6 class="text-center">Leave a comment</h6>
             <hr>
             <form class="col-md-12">
             <div class="input-field">
@@ -47,7 +47,7 @@ $js = <<<JS
             var data = {'commentedOn' :commentedOn,'comment' :comment};
             alert(commentedOn);
             $.ajax({
-                url:'addcomment',
+                url:'/onlinePaathsaala/frontend/web/index.php/site/addcomment',
                 dataType:"json",
                 type:'post',
                 data: data,

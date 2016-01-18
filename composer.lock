@@ -4,8 +4,13 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "hash": "44acc1bd748cb33df82380b75cea48c0",
     "content-hash": "90a35832b627be747dc41a2af8da4886",
+=======
+    "hash": "95a8078f907bc176f346442dd096fe91",
+    "content-hash": "4f4c706dd1bc04635a8e8fabd6de0f30",
+>>>>>>> 74865d3a6ed7b56a25a6011d59f9986edfa2771a
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -953,7 +958,11 @@
         },
         {
             "name": "kartik-v/yii2-widget-fileinput",
+<<<<<<< HEAD
             "version": "v1.0.4",
+=======
+            "version": "dev-master",
+>>>>>>> 74865d3a6ed7b56a25a6011d59f9986edfa2771a
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-fileinput.git",
@@ -2225,7 +2234,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "kartik-v/yii2-widget-depdrop": 20,
-        "dektrium/yii2-user": 20
+        "dektrium/yii2-user": 20,
+        "kartik-v/yii2-widget-fileinput": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

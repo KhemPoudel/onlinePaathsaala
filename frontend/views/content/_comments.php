@@ -1,5 +1,7 @@
 <div>
-    <div id="post-div-<?php echo $id;?>" class="card-panel horizontal-listing comments-section">
+    <div id="post-div-<?php echo $id;?>" class="card-panel horizontal-listing comments-section" style="margin-left: 6.5%;margin-right: 6.5%;">
+        <h5 class="text-center title">Comments <span class="label label-danger"><?=count($models);?></span></h5>
+        <hr>
         <?php
         foreach($models as $model)
         {?>
@@ -9,8 +11,8 @@
                 </div>
                 <div class="col-sm-10">
                     <a href="#">
-                        <h5 class="title"><?php echo \dektrium\user\models\User::findOne(['id'=>$model->commentedBy])->username;?>
-                        </h5>
+                        <h6 class="title"><?php echo \dektrium\user\models\User::findOne(['id'=>$model->commentedBy])->username;?>
+                        </h6>
                     </a>
                     <i class="fa fa-clock-o"><?=Yii::t('user', '{0, date}', $model->commentedAt)?></i>
                     <p>
@@ -21,7 +23,7 @@
         <?php }?>
         <div class="card-panel reply-section hoverable">
             <div class="row">
-                <h5 class="text-center">Leave a comment</h5>
+                <h6 class="text-center">Leave a comment</h6>
                 <hr>
                 <form class="col-md-12">
                     <div class="input-field">
@@ -60,8 +62,8 @@ $js = <<<JS
                     '</div>'+
                     '<div class="col-sm-10">'+
                         '<a href="#">'+
-                            '<h5 class="title">'+response.commentedBy+
-                            '</h5>'+
+                            '<h6 class="title">'+response.commentedBy+
+                            '</h6>'+
                         '</a>'+
                         '<i class="fa fa-clock-o">'+response.commentedAt+'</i>'+
                         '<p>'+

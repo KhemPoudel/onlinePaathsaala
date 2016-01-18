@@ -27,10 +27,10 @@ AppAsset::register($this);
 <div class="wrap" style="background-color: rgba(206, 211, 226, 0.47)">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Paathsaala',
+        'brandLabel' => '<i id="icon" class="fa fa-laptop" style="margin-top:-22px;text-shadow: rgb(55, 125, 179) 0px 0px 0px, rgb(58, 132, 188) 1px 1px 0px, rgb(61, 139, 198) 2px 2px 0px, rgb(64, 145, 207) 3px 3px 0px, rgb(67, 152, 217) 4px 4px 0px, rgb(70, 159, 226) 5px 5px 0px, rgb(73, 166, 236) 6px 6px 0px, rgb(76, 172, 245) 7px 7px 0px; font-size: 43px; color: rgb(0, 0, 0); height: 56px; width: 56px; line-height: 56px; border-radius: 49%; text-align: center; background-color: rgb(79, 179, 255);"></i>  Paathsaala',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar navbar-inverse navbar-fixed-top',
+            'class' => 'navbar default-color navbar-fixed-top',
         ],
     ]);
     $navItems=[
@@ -62,8 +62,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-left">&copy; Paathsaala <?= date('Y') ?></p>
     </div>
 </footer>
 
