@@ -14,9 +14,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'course_id')->textInput(['value'=>$course_id]) ?>
-
-    <?= $form->field($model, 'parent_id')->textInput(['value'=>$parent_id]) ?>
 
     <?= $form->field($model, 'level')->textInput(['value'=>$lvl ]) ?>
 

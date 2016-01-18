@@ -8,6 +8,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Topic Records';
+$this->params['breadcrumbs'][] = ['label' => $model->name,'url'=>['topic/initial','num'=>$num,'model'=>$model->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="topic-record-index">

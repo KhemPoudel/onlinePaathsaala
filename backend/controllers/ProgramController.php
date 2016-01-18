@@ -70,6 +70,7 @@ class ProgramController extends Controller
 
         $model = new ProgramRecord();
 //$faculty_id=$id;
+        $model->faculty_id=$id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['create', 'id' => $id,]
             );

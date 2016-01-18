@@ -68,7 +68,8 @@ class FacultyController extends Controller
     public function actionCreate($id)
     {
         $model = new FacultyRecord();
-$dataProvider=$id;
+        $dataProvider=$id;
+        $model->university_id=$id;
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
         return $this->redirect(['create', 'id' => $id,
