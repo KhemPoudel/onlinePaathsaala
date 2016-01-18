@@ -1,6 +1,8 @@
-<?php $this->beginBlock('suggestion_block');?>
-    <div class="card-panel bl-panel text-center hoverable" style="margin-right: -60%;margin-left: -5%;">
-        <h3 class="black-text">Suggestions</h3>
+<?php //$this->beginBlock('suggestion_block');
+use yii\helpers\Html;
+?>
+    <div class="card-panel bl-panel text-center hoverable" style="width: 190%;left:-28%;">
+        <h5 class="black-text">Suggestions</h5>
         <hr>
         <ul class="nav nav-tabs tabs-5" style="
 position: relative;
@@ -37,7 +39,7 @@ padding: 0;
 margin: 0;
 text-transform: uppercase;
 letter-spacing: .8px;
-"><a data-toggle="tab" href="#menu4">Programs</a></li>
+"><a data-toggle="tab" href="#programs">Programs</a></li>
             <li style="width: 33%;display: block;
 float: left;
 text-align: center;
@@ -46,35 +48,272 @@ height: 48px;
 padding: 0;
 margin: 0;
 text-transform: uppercase;
-letter-spacing: .8px;"><a data-toggle="tab" href="#menu5">Users</a></li>
+letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
         </ul>
 
-        <div class="tab-content card-panel blue-grey lighten-5" >
+        <div class="tab-content pre-scrollable" >
             <div id="home" class="tab-pane fade in active">
-                <br>
-                <h5>HOME</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <?php
+                $sugg_models=frontend\controllers\SiteController::suggestionForContentsOnTheBasisOfUserLikesAndDislikes();
+                //print_r($sugg_models);
+                if(empty($sugg_models))
+                {
+                    ?>
+                    <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
+                    <?php
+                }
+                    ?>
+                <div class="row">
+                    <div class="horizontal-panel">
+                        <div class="horizontal-listing">
+                            <?php
+                            foreach($sugg_models as $model)
+                            {
+                                ?>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <?php
+                                            if($model->type=='img')
+                                                $url='@web/assets/Uploads/'.$model->name;
+                                            else
+                                                $url='@web/images/'.$model->type.'_thumbnail.png';
+                                            ?>
+                                            <?= \yii\helpers\Html::img($url,['class'=>"img-responsive z-depth-2",'style'=>'width:107px;height:71px;'])?>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <?php
+                                            $link_user='<h5 class="title" style="font-size: 20px;
+                                                                    margin-left: -61%;
+                                                                    margin-top: 10%;">'.
+                                                $model->name.
+                                            '</h5>';
+
+                                            echo Html::a($link_user,['content/viewsingle','id'=>$model->id]);
+                                            ?>
+                                            <ul class="list-inline item-details">
+                                                <li><i class="fa fa-clock-o"> 05/10/2015</i></li>
+                                                <li><a href="#"><i class="fa fa-comments-o"></i> <?=frontend\controllers\SiteController::getCommentsCount($model);?></a></li>
+                                                <li><a href="#"><i class="fa fa-thumbs-o-up"> </i> <?=frontend\controllers\SiteController::getLikes($model);?></a></li>
+                                                <li><a href="#"><i class="fa fa-thumbs-o-down"> </i> <?=frontend\controllers\SiteController::getDislikes($model);?></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                                ?>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="menu4" class="tab-pane fade">
-                <br>
-                <h5>Menu 1</h5>
-                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+            <div id="programs" class="tab-pane fade in">
+                <?php
+                    $sugg_models=frontend\controllers\SiteController::suggestionsForPrograms();
+                    //print_r($sugg_models);
+                    if(empty($sugg_models))
+                    {
+                        ?>
+                        <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
+                        <?php
+                    }
+                        ?>
+                <div class="row">
+                    <div class="horizontal-panel">
+                        <div class="horizontal-listing">
+                            <?php
+                            foreach($sugg_models as $model)
+                            {
+                                ?>
+                                    <div class="row">
+                                        <div>
+                                            <div class="col-md-8">
+                                                <?php
+                                                $facultyRecord=\common\models\faculty\FacultyRecord::findOne($model->faculty_id);
+                                                $faculty=$facultyRecord->name;
+                                                $university=\common\models\university\UniversityRecord::findOne($facultyRecord->university_id)->name;
+                                                $link_program='<h5 class="title" style="font-size: 20px;
+                                                                    margin-left: -37%;
+                                                                    margin-top: 10%;">'.$model->name.'</h5>';
+                                                echo Html::a($link_program,['/course/index','program_id'=>$model->id,'faculty'=>$faculty,'university'=>$university]);
+                                                ?>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <?php
+                                                $follow_status='Unfollow';
+                                                $btn_follow='<i class="fa fa-minus-circle"></i>';
+                                                $follow_btn_class='';
+                                                if(count(\common\models\FollowerProgram::find()->where(['user_id'=>\Yii::$app->user->identity->getId(),'program_id'=>$model->id])->all())==0) {
+                                                    $follow_status = 'Follow';
+                                                    $btn_follow='<i class="fa fa-user-plus"></i>';
+                                                }
+                                                ?>
+                                                <button type="button" style="" class="btn btn-border-success btn-block btn-follow-program <?=$follow_btn_class?>" id="program-<?php echo $model->id?>" data-id="<?php echo $model->id?>" data-follow-status="<?php echo $follow_status?>">
+                                                    <span id="span-program-<?php echo $model->id;?>"><?= $btn_follow?></span>
+                                                </button>
+                                            </div>
+
+                                            <ul class="list-inline item-details">
+                                                <li><i class="fa fa-clock-o"> 05/10/2015</i></li>
+                                                <li><a href="#"><i class="fa fa-comments-o"></i> <?=$model->noOfFollowers;?></a></li>
+                                                <li><a href="#"><i class="fa fa-thumbs-o-up"> </i> <?=$model->noOLikes;?></a></li>
+                                                <li><a href="#"><i class="fa fa-thumbs-o-down"> </i> <?=$model->noOfDislikes;?></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                                ?>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="menu5" class="tab-pane fade">
-                <br>
-                <h5>Menu 2</h5>
-                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-            </div>
-            <div id="menu6" class="tab-pane fade">
-                <br>
-                <h5>Menu 3</h5>
-                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-            </div>
-            <div id="menu7" class="tab-pane fade">
-                <br>
-                <h5>Menu 3</h5>
-                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            <div id="users" class="tab-pane fade in">
+                <?php
+                $sugg_models=frontend\controllers\SiteController::suggestionsForUsers();
+                //print_r($sugg_models);
+                if(empty($sugg_models))
+                {
+                    ?>
+                    <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
+                    <?php
+                }
+                    ?>
+                <div class="row">
+                    <div class="horizontal-panel">
+                        <div class="horizontal-listing">
+                            <?php
+                            foreach($sugg_models as $model)
+                            {
+                                ?>
+                                    <div class="row">
+                                        <div>
+                                            <div class="col-md-8">
+                                                <?php
+                                                $link_program='<h5 class="title" style="font-size: 20px;
+                                                                    margin-left: 0%;
+                                                                    margin-top: 10%;">'.$model->username.'</h5>';
+                                                echo Html::a($link_program,['user/profile/show','id'=>$model->id]);
+                                                ?>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <?php
+                                                $follow_status='Unfollow';
+                                                $btn_follow='<i class="fa fa-minus-circle"></i>';
+                                                $follow_btn_class='';
+                                                if(count(\common\models\FollowerUsertoUser::find()->where(['followed_user_id'=>$model->id,'follower_user_id'=>\Yii::$app->user->identity->getId()])->all())==0) {
+                                                    $follow_status = 'Follow';
+                                                    $btn_follow='<i class="fa fa-user-plus"></i>';
+                                                }
+                                                ?>
+                                                <button type="button" style="" class="btn btn-border-success btn-block btn-follow <?=$follow_btn_class?>" id="<?php echo $model->id?>" data-id="<?php echo $model->id?>" data-follow-status="<?php echo $follow_status?>">
+                                                    <span id="span-<?php echo $model->id;?>"><?= $btn_follow?></span>
+                                                </button>
+                                            </div>
+                                            <ul class="list-inline item-details">
+                                                <li><i class="fa fa-clock-o"><?=Yii::t('user', '{0, date}', $model->created_at)?></i></li>
+                                                <li>
+                                                    <a href="#"><i class="fa fa-users">
+                                                            <?=\common\models\FollowerUsertoUser::find()->where(['followed_user_id'=>$model->id])->count();?></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#"><i class="fa fa-thumbs-o-up"> </i>
+                                                        <?php
+                                                        $contents=\common\models\content\ContentRecord::find()->where(['uploadedBy'=>$model->id])->all();
+                                                        $contentsIds=\yii\helpers\ArrayHelper::getColumn($contents,'id');
+                                                        $likeRecords=\common\models\LikeDislikeContent::find()->where(['content'=>$contentsIds,'likeOrDislike'=>1]);
+                                                        echo $likeRecords->count();
+                                                        ?>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#"><i class="fa fa-thumbs-o-down"> </i>
+                                                        <?php
+                                                        $dislikeRecords=\common\models\LikeDislikeContent::find()->where(['content'=>$contentsIds,'likeOrDislike'=>0]);
+                                                        echo $dislikeRecords->count();
+                                                        ?>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                                ?>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-<?php $this->endBlock();?>
+</div>
+<?php //$this->endBlock();?>
+<?php
+$js= <<<JS
+        $('.btn-follow').on('click', function(e) {
+            e.preventDefault();
+            var id=$(this).attr('data-id');
+            var follow_status=$(this).attr('data-follow-status');
+            var data = {'followed_id':id,'follow_status':follow_status};
+            alert(id);
+            $.ajax({
+                url:'/onlinePaathsaala/frontend/web/index.php/follow/addfollower',
+                dataType:"json",
+                type:'post',
+                data: data,
+                success: function(response) {
+                    console.log(response);
+                    if(response>=0)
+                    {
+                    if(response=='0')
+                    {
+                        $('#span-'+id).html('<i class="fa fa-minus-circle"></i>');
+                        $('#'+id).attr('data-follow-status','Unfollow');
+                    }
+
+                    else{
+                            $('#span-'+id).html('<i class="fa fa-user-plus"></i>');
+                            $('#'+id).attr('data-follow-status','Follow');
+                    }
+                    }
+                },
+                error: function(xhr,status,err){
+                console.log(status);
+                console.log(err);
+                }
+            });
+        });
+        $('.btn-follow-program').on('click', function(e) {
+            e.preventDefault();
+            var id=$(this).attr('data-id');
+            var follow_status=$(this).attr('data-follow-status');
+            var data = {'program_id':id,'follow_status':follow_status};
+            $.ajax({
+                url:'/onlinePaathsaala/frontend/web/index.php/follow/removeoraddfollow',
+                dataType:"json",
+                type:'post',
+                data: data,
+                success: function(response) {
+                    if(response>=0)
+                    {
+                       if(response=='0')
+                    {
+                        $('#span-program-'+id).html('<i class="fa fa-minus-circle"></i>');
+                        $('#program-'+id).attr('data-follow-status','Unfollow');
+                    }
+
+                    else{
+                            $('#span-program-'+id).html('<i class="fa fa-user-plus"></i>');
+                            $('#program-'+id).attr('data-follow-status','Follow');
+                    }
+                    }
+                },
+                error: function(xhr,status,err){
+                console.log(status);
+                console.log(err);
+                }
+            });
+        });
+JS;
+$this->registerJs($js);
+?>

@@ -28,7 +28,7 @@ class UniversityController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'block', 'confirm'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'block', 'confirm','front'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function ($rule, $action) {

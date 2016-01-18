@@ -45,7 +45,7 @@ class SiteController extends Controller
                 //'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup','error'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -104,7 +104,7 @@ class SiteController extends Controller
             $models = $query->offset($pages->offset)
                 ->limit($pages->limit)
                 ->all();
-        $arr=$this->suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models);
+        $arr=$this->suggestionForContentsOnTheBasisOfUserLikesAndDislikes();
         if(empty($models))
         {
             $models=$this->findSuggestions();
@@ -232,6 +232,12 @@ class SiteController extends Controller
     {
         $likes=LikeDislikeContent::find()->where(['content'=>$model->id,'likeOrDislike'=>0]);
         return $likes->count();
+    }
+
+    public function getCommentsCount($model)
+    {
+        $comments=CommentsContent::find()->where(['commentedOn'=>$model->id]);
+        return $comments->count();
     }
 
     public function IfLikedByUser($model)
@@ -410,16 +416,15 @@ class SiteController extends Controller
             $path = Yii::getAlias('@webroot') . '/assets/Uploads';
             $file = $path . '/'.$filename;
             return $this->render('download',['file'=>$file]);
-
     }
 
-    public function suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models)
+    public function suggestionForContentsOnTheBasisOfUserLikesAndDislikes()
     {
         $current_user=\Yii::$app->user->identity->getId();
         $allModels=ContentRecord::find()->all();
         $allModelsIds=ArrayHelper::getColumn($allModels,'id');
-        $modelsIds=ArrayHelper::getColumn($models,'id');
-        $modelsToBeComputedIds=array_diff($allModelsIds,$modelsIds);
+        //$modelsIds=ArrayHelper::getColumn($models,'id');
+        $modelsToBeComputedIds=array_diff($allModelsIds,[]);//$modelsIds);
         //$l1 is all Contents Liked By Current User
         $likedByCurrentUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$current_user])->all();
         $l1=ArrayHelper::getColumn($likedByCurrentUser,'content');
@@ -481,6 +486,146 @@ class SiteController extends Controller
                 $p=($zl-$zd)/$totalCount;
             $arrayOfProbability[$id]=$p;
         }
-        return $arrayOfProbability;
+        arsort($arrayOfProbability);
+        $models=[];
+        foreach(array_keys($arrayOfProbability) as $id)
+        {
+            $content=ContentRecord::findOne($id);
+            array_push($models,$content);
+        }
+        return $models;
+    }
+
+    public function suggestionsForPrograms()
+    {
+        $current_user=\Yii::$app->user->identity->getId();
+        $programsFollowedByCurrentUser=FollowerProgram::find()->where(['user_id'=>$current_user])->all();
+        if(empty($programsFollowedByCurrentUser))
+        {
+            $programs=ProgramRecord::find()->all();
+            $scoresOfEachProgram=[];
+            $models=[];
+            foreach($programs as $program)
+            {
+                $follows=$program->noOfFollowers;
+                $likes=$program->noOLikes;
+                $dislikes=$program->noOfDislikes;
+                $score=2*$follows+$likes-0.5*$dislikes;
+                $scoresOfEachProgram[$program->id]=$score;
+            }
+            arsort($scoresOfEachProgram);
+            foreach(array_keys($scoresOfEachProgram) as $id)
+            {
+                $program=ProgramRecord::findOne($id);
+                array_push($models,$program);
+            }
+            return $models;
+        }
+        else
+        {
+            $targetPrograms=[];
+            foreach($programsFollowedByCurrentUser as $followedProgram)
+            {
+                $allFollowersOfFollowedProgram=FollowerProgram::find()->where(['program_id'=>$followedProgram->program_id])->all();
+                foreach($allFollowersOfFollowedProgram as $singleFollowerOfFollowee)
+                {
+                    $followeesOfFollowerOfFolloweesOfCurrentUser=FollowerProgram::find()->where(['user_id'=>$singleFollowerOfFollowee->user_id])->all();
+                    foreach($followeesOfFollowerOfFolloweesOfCurrentUser as $targetProgram)
+                    {
+                        array_push($targetPrograms,$targetProgram);
+                    }
+                }
+
+            }
+            $followingProgramsIds=ArrayHelper::getColumn($programsFollowedByCurrentUser,'program_id');
+            $targetProgramsIds=ArrayHelper::getColumn($targetPrograms,'program_id');
+            $resultProgramsIds=array_diff($targetProgramsIds,$followingProgramsIds);
+            $countOfPrograms=array_count_values($resultProgramsIds);
+            $scoresOfEachProgram=[];
+            foreach(array_unique($resultProgramsIds) as $programId)
+            {
+                $followersOfProgram=FollowerProgram::find()->where(['program_id'=>$programId])->all();
+                $firstWeight=count($followersOfProgram);
+                $secondWeight=$countOfPrograms[$programId];
+                $scoresOfEachProgram[$programId]=($firstWeight+$secondWeight)/2;
+            }
+            $models=[];
+            arsort($scoresOfEachProgram);
+            foreach(array_keys($scoresOfEachProgram) as $id)
+            {
+                $program=ProgramRecord::findOne($id);
+                array_push($models,$program);
+            }
+            return $models;
+        }
+    }
+
+    public function suggestionsForUsers()
+    {
+        $current_user=\Yii::$app->user->identity->getId();
+        $followees=FollowerUsertoUser::find()->where(['follower_user_id'=>$current_user])->all();
+        if(empty($followees))
+        {
+            $users=User::find()->all();
+            $scoresOfEachUser=[];
+            $models=[];
+            foreach($users as $user)
+            {
+                $followRecords=FollowerUsertoUser::find()->where(['followed_user_id'=>$user->id]);
+                $follows=$followRecords->count();
+                $contents=ContentRecord::find()->where(['uploadedBy'=>$user->id])->all();
+                $contentsIds=ArrayHelper::getColumn($contents,'id');
+                $likeRecords=LikeDislikeContent::find()->where(['content'=>$contentsIds,'likeOrDislike'=>1]);
+                $dislikeRecords=LikeDislikeContent::find()->where(['content'=>$contentsIds,'likeOrDislike'=>0]);
+                $score=2*$follows+$likeRecords->count()-0.5*$dislikeRecords->count();
+                $scoresOfEachUser[$user->id]=$score;
+            }
+            arsort($scoresOfEachUser);
+            foreach(array_keys($scoresOfEachUser) as $id)
+            {
+                $user=User::findOne($id);
+                array_push($models,$user);
+            }
+            return $models;
+        }
+        else {
+            $targetUsers = [];
+            foreach ($followees as $followee) {
+                $followersOfFollowee = FollowerUsertoUser::find()->where(['followed_user_id' => $followee->followed_user_id])->all();
+                foreach ($followersOfFollowee as $singleFollowerOfFollowee) {
+                    $followeesOfFollowerOfFollowees = FollowerUsertoUser::find()->where(['follower_user_id' => $singleFollowerOfFollowee->follower_user_id])->all();
+                    foreach ($followeesOfFollowerOfFollowees as $targetUser) {
+                        array_push($targetUsers, $targetUser);
+                    }
+                }
+
+            }
+            $followeesIds = ArrayHelper::getColumn($followees, 'followed_user_id');
+            $targetUsersIds = ArrayHelper::getColumn($targetUsers, 'followed_user_id');
+            $resultUsersIds = array_diff($targetUsersIds, $followeesIds);
+            $countOfUsers = array_count_values($resultUsersIds);
+            $scoresOfEachUser = [];
+            foreach (array_unique($resultUsersIds) as $userId) {
+                $followersOfUser = FollowerUsertoUser::find()->where(['followed_user_id' => $userId])->all();
+                $followeesOfUser = FollowerUsertoUser::find()->where(['follower_user_id' => $userId])->all();
+                $followeesIdsOfUser=ArrayHelper::getColumn($followeesOfUser,'followed_user_id');
+                if(count($followeesOfUser)==0)
+                {
+                    $firstWeight=count($followersOfUser);
+                }
+                else
+                    $firstWeight = count($followersOfUser)/count($followeesOfUser);
+                $secondWeight = $countOfUsers[$userId];
+                $thirdWeight=array_intersect($followeesIdsOfUser,$followeesIds);
+                $scoresOfEachUser[$userId] = ($firstWeight+$secondWeight+count($thirdWeight))/3;
+            }
+            $models=[];
+            arsort($scoresOfEachUser);
+            foreach (array_keys($scoresOfEachUser) as $id) {
+                $user = User::findOne($id);
+                array_push($models, $user);
+            }
+            return $models;
+        }
     }
 }

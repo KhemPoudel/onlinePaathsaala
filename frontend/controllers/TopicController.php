@@ -59,13 +59,13 @@ class TopicController extends Controller
         {
             $font='normal';
         }
-        $link='<span style="color:#111111;font-weight:'.$font.'">'.$model->name.'</span>';
+        $link='<span class="token attr-name">'.$model->name.'</span>';
         echo Html::a($link,['/content/index','topic_id'=>$model->id]),'<br>';
         foreach($model->topicRecords as $childRecord)
         {
             $i++;
             $margin=50*$childRecord->level.'px';
-            echo '<span style="color:#111111;margin-left:'.$margin.'">'.$i.')'.'</span>';
+            echo '<span class="token attr-value" style="margin-left:'.$margin.'">'.$i.')'.'</span>';
             $this->renderChild($childRecord);
         }
     }

@@ -1,102 +1,60 @@
-<?php
-use yii\helpers\Html;
-use yii\bootstrap\Modal;
-use yii\helpers\Url;
-?>
-<div class="container">
-    <div class="row">
-        <div class="col-md-9">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4><?= $topic ?></h4>
-                </div>
-                <div class="panel-body">
-                    <div style="border-bottom: groove">
-                        <h4>Videos</h4>
-                    </div>
-                    <br>
-                    <ul class="list-unstyled video-list-thumbs row">
-                        <?php
-                        if(empty($model_videos))
-                        {?>
-                            <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
-                        <?php
-                        }
-                        foreach($model_videos as $model)
-                        {
-                            ?>
-                            <li class="col-lg-3 col-sm-4 col-xs-6">
-                                <a href="<?php echo Url::toRoute('/content/viewsingle').'?id='. $model->id;?>" title=<?php echo $model->name;?>>
-                                    <p style="height: 130px;">
-                                        <?php echo Html::img('@web/images/video_thumbnail.jpg', ['height' => '70%']); ?>
-                                    </p>
-
-                                    <h2><?php echo $model->name;?></h2>
-                                    <span class="glyphicon glyphicon-play-circle"></span>
-                                    <span class="duration">03:15</span>
-                                </a>
-                            </li>
-                        <?php
-                        }
-                        ?>
-                    </ul>
-                    <div style="border-bottom: groove">
-                        <h4>PDFs</h4>
-                    </div>
-                    <br>
-                    <ul class="list-unstyled video-list-thumbs row">
-                        <?php
-                        if(empty($model_pdf))
-                        {?>
-                            <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
-                        <?php
-                        }
-                        foreach ($model_pdf as $model) {
-                            ?>
-                            <li class="col-lg-3 col-sm-4 col-xs-6">
-                                <a href=<?php echo Url::base() . '/assets/Uploads/' . $model->name;?> target='_blank' title=<?php echo $model->name;?>>
-
-                                    <p style="height:  130px;"?>
-                                        <?php echo Html::img('@web/images/pdf_thumbnail.png', ['height' => '140px']); ?>
-                                    </p>
-                                    <h2><?= $model->name;?></h2>
-                                </a>
-                            </li>
-
-                        <?php
-                        }
-                        ?>
-                    </ul>
-
-                    <div style="border-bottom: groove">
-                        <h4>Images</h4>
-                    </div>
-                    <br>
-                    <ul class="list-unstyled video-list-thumbs row">
-                        <?php
-                        if(empty($model_img))
-                        {?>
-                            <span class="text-center" style="color: rgba(37, 140, 235, 0.17);"><h3>Nothing to Show</h3></span>
-                        <?php
-                        }
-                        foreach ($model_img as $model) {
-                            ?>
-                            <li class="col-lg-3 col-sm-4 col-xs-6">
-                                <a title=<?php echo $model->name;?>>
-
-                                    <p style="height:  130px;"?>
-                                        <?php echo Html::img('@web/assets/uploads/'.$model->name, ['height' => '140px']); ?>
-                                    </p>
-                                    <h2><?= $model->name;?></h2>
-                                </a>
-                            </li>
-                        <?php
-                        }
-                        ?>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<div class="card-panel bl-panel text-center hoverable" style="margin-left: 0%;margin-right: 0%;margin-top: 10%;">
+    <h5><?=$topic?></h5>
+    <hr>
+    <ul class="nav nav-tabs tabs-3" style="
+                                                position: relative;
+                                                height: 48px;
+                                                background-color: #fff;
+                                                margin: 0 auto;
+                                                width: 100%;
+                                                white-space: nowrap;
+                                                border: none;
+                                                border-bottom: 1px solid #ddd;
+                                                padding-left: 0;
+                                                padding: 0;
+                                                list-style: none;
+                                                box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);">
+        <li style="
+                        width: 33%;
+                        display: block;
+                        float: left;
+                        text-align: center;
+                        line-height: 48px;
+                        height: 48px;
+                        padding: 0;
+                        margin: 0;
+                        text-transform: uppercase;
+                        letter-spacing: .8px;" class="active">
+            <a data-toggle="tab" href="#video-tab">Videos</a>
+        </li>
+        <li style="
+                        width: 33%;
+                        display: block;
+                        float: left;
+                        text-align: center;
+                        line-height: 48px;
+                        height: 48px;
+                        padding: 0;
+                        margin: 0;
+                        text-transform: uppercase;
+                        letter-spacing: .8px;">
+            <a data-toggle="tab" href="#pdf-tab">Pdfs</a>
+        </li>
+        <li style="
+                        width: 33%;
+                        display: block;
+                        float: left;
+                        text-align: center;
+                        line-height: 48px;
+                        height: 48px;
+                        padding: 0;
+                        margin: 0;
+                        text-transform: uppercase;
+                        letter-spacing: .8px;">
+            <a data-toggle="tab" href="#img-tab">Images</a>
+        </li>
+    </ul>
+    <div class="tab-content" >
+        <?= $this->render('//user/profile/_profileContents',['model_videos'=>$model_videos,'model_pdf'=>$model_pdf,'model_img'=>$model_img])?>
     </div>
 </div>

@@ -19,10 +19,11 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-gii": "*",
-        "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-widgets": "^3.4",
         "kartik-v/yii2-widget-depdrop": "@dev",
         "dektrium/yii2-user": "1.0.*@dev",
-        "ext-intl" : "*"
+        "ext-intl" : "*",
+        "kartik-v/yii2-widget-fileinput": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
