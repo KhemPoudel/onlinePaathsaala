@@ -30,9 +30,9 @@ class CourseController extends Controller
      * Lists all CourseRecord models.
      * @return mixed
      */
-    public function actionIndex($program_id)
+    public function actionIndex($program_id,$university,$faculty)
     {
-        $model=CourseRecord::findAll(['program_id'=>$program_id]);
-        return $this->render('index',['model'=>$model]);
+        $models=CourseRecord::findAll(['program_id'=>$program_id]);
+        return $this->render('index',['models'=>$models,'program_id'=>$program_id,'university'=>$university,'faculty'=>$faculty]);
     }
 }

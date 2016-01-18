@@ -4,10 +4,12 @@ namespace frontend\controllers;
 use common\models\CommentsContent;
 use common\models\FollowerUsertoUser;
 use common\models\LikeDislikeContent;
+use common\models\program\ProgramRecord;
 use common\models\topic\TopicRecord;
 use common\models\content\ContentRecord;
 use common\models\FollowerProgram;
 use common\models\course\CourseRecord;
+use common\models\WishList;
 use dektrium\user\models\User;
 use Yii;
 use common\models\LoginForm;
@@ -25,6 +27,7 @@ use yii\db\Query;
 use yii\db\ActiveQuery;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -52,7 +55,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['index','about','contact','update'],
+                        'actions' => ['index','about','contact','update','addcomment','addwish','download'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -95,14 +98,18 @@ class SiteController extends Controller
         $course_ids=ArrayHelper::getColumn($courses,'id');
         $topics=TopicRecord::find()->where(['course_id'=>$course_ids])->all();
         $topics_ids=ArrayHelper::getColumn($topics,'id');
-            $query = ContentRecord::find()->where(['topic_id' =>$topics_ids])->orWhere(['uploadedBy'=>$followed_users_ids]);
+            $query = ContentRecord::find()->where(['topic_id' =>$topics_ids])->orWhere(['uploadedBy'=>$followed_users_ids])->orderBy('id DESC');
             $countQuery = clone $query;
             $pages = new Pagination(['totalCount' => $countQuery->count()]);
             $models = $query->offset($pages->offset)
                 ->limit($pages->limit)
                 ->all();
-
-        return $this->render('index',['models'=>$models,'pages'=>$pages]);
+        $arr=$this->suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models);
+        if(empty($models))
+        {
+            $models=$this->findSuggestions();
+        }
+        return $this->render('index',['models'=>$models,'pages'=>$pages,'arr'=>$arr]);
     }
 
     public function actionLogin()
@@ -206,13 +213,13 @@ class SiteController extends Controller
 
     public function getComments($model)
     {
-        $query = CommentsContent::find()->where(['commentedOn'=>$model->id]);
+        $query = CommentsContent::find()->where(['commentedOn'=>$model->id])->orderBy('commentedAt DESC');
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
         $models = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
-        return $this->renderPartial('_comments',['models'=>$models]);
+        return $this->renderPartial('_comments',['models'=>$models,'id'=>$model->id,'pages'=>$pages]);
     }
 
     public function getLikes($model)
@@ -239,30 +246,19 @@ class SiteController extends Controller
 
     public function actionUpdate()
     {
-        /*if($like_status!=$present_status) {
-            if($like_status==-1)
-            {
-                $likeOrDislike=new LikeDislikeContent();
-                $likeOrDislike->content=$id;
-                $likeOrDislike->likedOrDislikedBy=\Yii::$app->user->identity->getId();
-                $likeOrDislike->likeOrDislike=$present_status;
-                $likeOrDislike->save();
-            }
-            else {
-                $likeOrDislike = LikeDislikeContent::findOne(['content' => $id, 'likedOrDislikedBy' => \Yii::$app->user->identity->getId()]);
-                $likeOrDislike->likeOrDislike = $present_status;
-                $likeOrDislike->save();
-            }
-        }
-        //return $this->render('index',['models'=>$models,'pages'=>$pages]);
-        $model=ContentRecord::findOne(['id'=>$id]);
-        return $this->render(['_likedislike','model'=>$model]);
-*/
-        //if (Yii::$app->request->isAjax) {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
             $data = Yii::$app->request->post();
             $like_status=  $data['like_status'];
             $present_status= $data['present_status'];
             $id= $data['id'];
+            //echo $data;
+            //for finding program of content
+            $topic_id=ContentRecord::findOne($id)->topic_id;
+            $course_id=TopicRecord::findOne($topic_id)->course_id;
+            $program_id=CourseRecord::findOne($course_id)->program_id;
+            $program=ProgramRecord::findOne($program_id);
+            //end of finding program of content
             if($like_status!=$present_status) {
                 if($like_status==-1)
                 {
@@ -271,15 +267,220 @@ class SiteController extends Controller
                     $likeOrDislike->likedOrDislikedBy=\Yii::$app->user->identity->getId();
                     $likeOrDislike->likeOrDislike=$present_status;
                     $likeOrDislike->save();
+                    //for program like counter
+                    if($present_status==0)
+                        $program->noOfDislikes+=1;
+                    else
+                        $program->noOLikes+=1;
+                    $program->save();
+
                 }
                 else {
                     $likeOrDislike = LikeDislikeContent::findOne(['content' => $id, 'likedOrDislikedBy' => \Yii::$app->user->identity->getId()]);
                     $likeOrDislike->likeOrDislike = $present_status;
                     $likeOrDislike->save();
+
+                    //for program counter
+                    if($present_status==0)
+                    {
+                        $program->noOfDislikes+=1;
+                        $program->noOLikes-=1;
+                    }
+                    else
+                    {
+                        $program->noOfDislikes-=1;
+                        $program->noOLikes+=1;
+                    }
+                    $program->save();
                 }
             }
-            return 1;
-        //}
+            else
+            {
+                $likeOrDislike = LikeDislikeContent::findOne(['content' => $id, 'likedOrDislikedBy' => \Yii::$app->user->identity->getId()]);
+                $likeOrDislike->delete();
+
+                //for program like counter
+                if($present_status==0)
+                    $program->noOfDislikes-=1;
+                else
+                    $program->noOLikes-=1;
+                $program->save();
+            }
+            $likes=LikeDislikeContent::find()->where(['content'=>$id,'likeOrDislike'=>1]);
+            $dislikes=LikeDislikeContent::find()->where(['content'=>$id,'likeOrDislike'=>0]);
+            $likeOrDislike=LikeDislikeContent::findOne(['content'=>$id,'likedOrDislikedBy'=>\Yii::$app->user->identity->getId()]);
+            if($likeOrDislike==null)
+            {
+                $new_like_status=-1;
+            }
+            else
+                $new_like_status=$likeOrDislike->likeOrDislike;
+            return ['new_like_status'=>$new_like_status,'new_id'=>$id,'likes'=>$likes->count(),'dislikes'=>$dislikes->count()];
+        }
+
     }
 
+    public function actionAddcomment()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $data = Yii::$app->request->post();
+            $comment = $data['comment'];
+            $commentedOn=$data['commentedOn'];
+            $model=new CommentsContent();
+            $model->comment=$comment;
+            $model->commentedOn=$commentedOn;
+            $model->commentedBy=\Yii::$app->user->identity->getId();
+            $model->commentedAt=time();
+            if($model->save())
+            {
+                return [
+                    'comment'=>$comment,
+                    'commentedOn'=>$commentedOn,
+                    'commentedBy'=>User::findOne(['id'=>\Yii::$app->user->identity->getId()])->username,
+                    'commentedAt'=>Yii::t('user', '{0, date}', time())
+                ];
+            }
+
+        }
+    }
+
+
+    public function actionAddwish()
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $data = Yii::$app->request->post();
+            $id = $data['id'];
+            $status=$data['status'];
+            if($status=='1')
+            {
+                $model=new WishList();
+                $model->content=$id;
+                $model->wishedBy=\Yii::$app->user->identity->getId();
+                if($model->save())
+                {
+                    return ['a'=>'1'];
+                }
+            }
+            else
+            {
+                $model=WishList::findOne(['content'=>$id,'wishedBy'=>\Yii::$app->user->identity->getId()]);
+                $model->delete();
+                return ['a'=>'0'];
+            }
+
+        }
+    }
+
+    public function ifWished($id)
+    {
+        $modelWish=WishList::findOne(['content'=>$id,'wishedBy'=>\Yii::$app->user->identity->getId()]);
+        if($modelWish==null)
+            return 1;
+        else
+            return 0;
+    }
+
+    public function findSuggestions()
+    {
+        $contents=ContentRecord::find()->all();
+        $scoresOfEachContent=[];
+        $models=[];
+        foreach($contents as $content)
+        {
+            $likeRecords=LikeDislikeContent::find()->where(['content'=>$content->id,'likeOrDislike'=>1]);
+            $dislikeRecords=LikeDislikeContent::find()->where(['content'=>$content->id,'likeOrDislike'=>0]);
+            $likes=$likeRecords->count();
+            $dislikes=$dislikeRecords->count();
+            $score=$likes-0.5*$dislikes;
+            $scoresOfEachContent[$content->id]=$score;
+        }
+        arsort($scoresOfEachContent);
+        foreach(array_keys($scoresOfEachContent) as $id)
+        {
+            $content=ContentRecord::findOne($id);
+            array_push($models,$content);
+        }
+        return $models;
+    }
+
+    public function actionDownload($filename)
+    {
+            $path = Yii::getAlias('@webroot') . '/assets/Uploads';
+            $file = $path . '/'.$filename;
+            return $this->render('download',['file'=>$file]);
+
+    }
+
+    public function suggestionForContentsOnTheBasisOfUserLikesAndDislikes($models)
+    {
+        $current_user=\Yii::$app->user->identity->getId();
+        $allModels=ContentRecord::find()->all();
+        $allModelsIds=ArrayHelper::getColumn($allModels,'id');
+        $modelsIds=ArrayHelper::getColumn($models,'id');
+        $modelsToBeComputedIds=array_diff($allModelsIds,$modelsIds);
+        //$l1 is all Contents Liked By Current User
+        $likedByCurrentUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$current_user])->all();
+        $l1=ArrayHelper::getColumn($likedByCurrentUser,'content');
+        //$d1 is all Contents Disliked By Current User
+        $dislikedByCurrentUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$current_user])->all();
+        $d1=ArrayHelper::getColumn($dislikedByCurrentUser,'content');
+        $arrayOfProbability=[];
+        foreach($modelsToBeComputedIds as $id)
+        {
+            $likedRecords=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'content'=>$id])->all();
+            $likerUsersIds=ArrayHelper::getColumn($likedRecords,'likedOrDislikedBy');//all users liking the content
+            $dislikedRecords=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'content'=>$id])->all();
+            $dislikerUsersIds=ArrayHelper::getColumn($dislikedRecords,'likedOrDislikedBy');//all users disliking the content
+            //zl is sum of similarities between likers and current user
+            $zl=0;
+            foreach($likerUsersIds as $likerUsersId)
+            {
+                //$l2 is all Contents Liked By This User
+                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $l2=ArrayHelper::getColumn($likedByUser,'content');
+                //$d2 is all Contents Disliked By This User
+                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$likerUsersId])->all();
+                $d2=ArrayHelper::getColumn($dislikedByUser,'content');
+                $l1Intersectl2=count(array_intersect($l1,$l2));
+                $d1Intersectd2=count(array_intersect($d1,$d2));
+                $l1Intersectd2=count(array_intersect($l1,$d2));
+                $l2Intersectd1=count(array_intersect($l2,$d1));
+                $l1Ul2Ud1Ud2=count(array_unique(array_merge($l1,$l2,$d1,$d2)));
+
+                //$s is similarity index Between Current User And This User
+                $s=($l1Intersectl2+$d1Intersectd2-$l1Intersectd2-$l2Intersectd1)/$l1Ul2Ud1Ud2;
+                $zl+=$s;
+            }
+            //zd is sum of similarities between dislikers and current user
+            $zd=0;
+            foreach($dislikerUsersIds as $dislikerUsersId)
+            {
+                //$l2 is all Contents Liked By This User
+                $likedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>1,'likedOrDislikedBy'=>$dislikerUsersId])->all();
+                $l2=ArrayHelper::getColumn($likedByUser,'content');
+                //$d2 is all Contents Disliked By This User
+                $dislikedByUser=LikeDislikeContent::find()->where(['likeOrDislike'=>0,'likedOrDislikedBy'=>$dislikerUsersId])->all();
+                $d2=ArrayHelper::getColumn($dislikedByUser,'content');
+
+                $l1Intersectl2=count(array_intersect($l1,$l2));
+                $d1Intersectd2=count(array_intersect($d1,$d2));
+                $l1Intersectd2=count(array_intersect($l1,$d2));
+                $l2Intersectd1=count(array_intersect($l2,$d1));
+                $l1Ul2Ud1Ud2=count(array_unique(array_merge($l1,$l2,$d1,$d2)));
+
+                //$s is similarity index Between Current User And This User
+                $s=($l1Intersectl2+$d1Intersectd2-$l1Intersectd2-$l2Intersectd1)/$l1Ul2Ud1Ud2;
+                $zd+=$s;
+            }
+            $totalCount=count($likerUsersIds)+count($dislikerUsersIds);
+            if($totalCount==0)
+                $p=-100;
+            else
+                $p=($zl-$zd)/$totalCount;
+            $arrayOfProbability[$id]=$p;
+        }
+        return $arrayOfProbability;
+    }
 }
