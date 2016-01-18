@@ -1,4 +1,6 @@
-<?php //$this->beginBlock('suggestion_block');?>
+<?php //$this->beginBlock('suggestion_block');
+use yii\helpers\Html;
+?>
     <div class="card-panel bl-panel text-center hoverable" style="width: 190%;left:-28%;">
         <h5 class="black-text">Suggestions</h5>
         <hr>
@@ -68,7 +70,6 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                             foreach($sugg_models as $model)
                             {
                                 ?>
-                                <a href="">
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <?php
@@ -80,11 +81,15 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                             <?= \yii\helpers\Html::img($url,['class'=>"img-responsive z-depth-2",'style'=>'width:107px;height:71px;'])?>
                                         </div>
                                         <div class="col-sm-8">
-                                            <h5 class="title" style="font-size: 20px;
+                                            <?php
+                                            $link_user='<h5 class="title" style="font-size: 20px;
                                                                     margin-left: -61%;
-                                                                    margin-top: 10%;">
-                                                <?=$model->name;?>
-                                            </h5>
+                                                                    margin-top: 10%;">'.
+                                                $model->name.
+                                            '</h5>';
+
+                                            echo Html::a($link_user,['content/viewsingle','id'=>$model->id]);
+                                            ?>
                                             <ul class="list-inline item-details">
                                                 <li><i class="fa fa-clock-o"> 05/10/2015</i></li>
                                                 <li><a href="#"><i class="fa fa-comments-o"></i> <?=frontend\controllers\SiteController::getCommentsCount($model);?></a></li>
@@ -93,7 +98,6 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                             </ul>
                                         </div>
                                     </div>
-                                </a>
                                 <?php
                             }
                                 ?>
@@ -123,12 +127,29 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                     <div class="row">
                                         <div>
                                             <div class="col-md-8">
-                                                <h5 class="title" style="font-size: 20px;
+                                                <?php
+                                                $facultyRecord=\common\models\faculty\FacultyRecord::findOne($model->faculty_id);
+                                                $faculty=$facultyRecord->name;
+                                                $university=\common\models\university\UniversityRecord::findOne($facultyRecord->university_id)->name;
+                                                $link_program='<h5 class="title" style="font-size: 20px;
                                                                     margin-left: -37%;
-                                                                    margin-top: 10%;"><?=$model->name;?></h5>
+                                                                    margin-top: 10%;">'.$model->name.'</h5>';
+                                                echo Html::a($link_program,['/course/index','program_id'=>$model->id,'faculty'=>$faculty,'university'=>$university]);
+                                                ?>
                                             </div>
                                             <div class="col-md-4">
-                                                <button type="button" class="btn btn-border-default"><i class="fa fa-user-plus"></i> </button>
+                                                <?php
+                                                $follow_status='Unfollow';
+                                                $btn_follow='<i class="fa fa-minus-circle"></i>';
+                                                $follow_btn_class='';
+                                                if(count(\common\models\FollowerProgram::find()->where(['user_id'=>\Yii::$app->user->identity->getId(),'program_id'=>$model->id])->all())==0) {
+                                                    $follow_status = 'Follow';
+                                                    $btn_follow='<i class="fa fa-user-plus"></i>';
+                                                }
+                                                ?>
+                                                <button type="button" style="" class="btn btn-border-success btn-block btn-follow-program <?=$follow_btn_class?>" id="program-<?php echo $model->id?>" data-id="<?php echo $model->id?>" data-follow-status="<?php echo $follow_status?>">
+                                                    <span id="span-program-<?php echo $model->id;?>"><?= $btn_follow?></span>
+                                                </button>
                                             </div>
 
                                             <ul class="list-inline item-details">
@@ -167,12 +188,26 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                     <div class="row">
                                         <div>
                                             <div class="col-md-8">
-                                                <h5 class="title" style="font-size: 20px;
-                                                                    margin-left: -37%;
-                                                                    margin-top: 10%;"><?=$model->username;?></h5>
+                                                <?php
+                                                $link_program='<h5 class="title" style="font-size: 20px;
+                                                                    margin-left: 0%;
+                                                                    margin-top: 10%;">'.$model->username.'</h5>';
+                                                echo Html::a($link_program,['user/profile/show','id'=>$model->id]);
+                                                ?>
                                             </div>
                                             <div class="col-md-4">
-                                                <button type="button" class="btn btn-border-default"><i class="fa fa-user-plus"></i> </button>
+                                                <?php
+                                                $follow_status='Unfollow';
+                                                $btn_follow='<i class="fa fa-minus-circle"></i>';
+                                                $follow_btn_class='';
+                                                if(count(\common\models\FollowerUsertoUser::find()->where(['followed_user_id'=>$model->id,'follower_user_id'=>\Yii::$app->user->identity->getId()])->all())==0) {
+                                                    $follow_status = 'Follow';
+                                                    $btn_follow='<i class="fa fa-user-plus"></i>';
+                                                }
+                                                ?>
+                                                <button type="button" style="" class="btn btn-border-success btn-block btn-follow <?=$follow_btn_class?>" id="<?php echo $model->id?>" data-id="<?php echo $model->id?>" data-follow-status="<?php echo $follow_status?>">
+                                                    <span id="span-<?php echo $model->id;?>"><?= $btn_follow?></span>
+                                                </button>
                                             </div>
                                             <ul class="list-inline item-details">
                                                 <li><i class="fa fa-clock-o"><?=Yii::t('user', '{0, date}', $model->created_at)?></i></li>
@@ -213,3 +248,72 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
     </div>
 </div>
 <?php //$this->endBlock();?>
+<?php
+$js= <<<JS
+        $('.btn-follow').on('click', function(e) {
+            e.preventDefault();
+            var id=$(this).attr('data-id');
+            var follow_status=$(this).attr('data-follow-status');
+            var data = {'followed_id':id,'follow_status':follow_status};
+            alert(id);
+            $.ajax({
+                url:'/onlinePaathsaala/frontend/web/index.php/follow/addfollower',
+                dataType:"json",
+                type:'post',
+                data: data,
+                success: function(response) {
+                    console.log(response);
+                    if(response>=0)
+                    {
+                    if(response=='0')
+                    {
+                        $('#span-'+id).html('<i class="fa fa-minus-circle"></i>');
+                        $('#'+id).attr('data-follow-status','Unfollow');
+                    }
+
+                    else{
+                            $('#span-'+id).html('<i class="fa fa-user-plus"></i>');
+                            $('#'+id).attr('data-follow-status','Follow');
+                    }
+                    }
+                },
+                error: function(xhr,status,err){
+                console.log(status);
+                console.log(err);
+                }
+            });
+        });
+        $('.btn-follow-program').on('click', function(e) {
+            e.preventDefault();
+            var id=$(this).attr('data-id');
+            var follow_status=$(this).attr('data-follow-status');
+            var data = {'program_id':id,'follow_status':follow_status};
+            $.ajax({
+                url:'/onlinePaathsaala/frontend/web/index.php/follow/removeoraddfollow',
+                dataType:"json",
+                type:'post',
+                data: data,
+                success: function(response) {
+                    if(response>=0)
+                    {
+                       if(response=='0')
+                    {
+                        $('#span-program-'+id).html('<i class="fa fa-minus-circle"></i>');
+                        $('#program-'+id).attr('data-follow-status','Unfollow');
+                    }
+
+                    else{
+                            $('#span-program-'+id).html('<i class="fa fa-user-plus"></i>');
+                            $('#program-'+id).attr('data-follow-status','Follow');
+                    }
+                    }
+                },
+                error: function(xhr,status,err){
+                console.log(status);
+                console.log(err);
+                }
+            });
+        });
+JS;
+$this->registerJs($js);
+?>

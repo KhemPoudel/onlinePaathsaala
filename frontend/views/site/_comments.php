@@ -47,7 +47,7 @@ $js = <<<JS
             var data = {'commentedOn' :commentedOn,'comment' :comment};
             alert(commentedOn);
             $.ajax({
-                url:'addcomment',
+                url:'/onlinePaathsaala/frontend/web/index.php/site/addcomment',
                 dataType:"json",
                 type:'post',
                 data: data,

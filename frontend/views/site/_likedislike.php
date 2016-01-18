@@ -67,7 +67,7 @@ $js = <<<JS
             var data = {'like_status' :like_status,'present_status' :present_status,'id':id};
             console.log(data);
             $.ajax({
-                url:'update',
+                url:'/onlinePaathsaala/frontend/web/index.php/site/update',
                 dataType:"json",
                 type:'post',
                 data: data,

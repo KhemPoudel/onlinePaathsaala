@@ -1,5 +1,5 @@
 <div class="card-panel bl-panel text-center hoverable" style="margin-left: 0%;margin-right: 0%;margin-top: 10%;">
-    <h5>Contents</h5>
+    <h5><?=$topic?></h5>
     <hr>
     <ul class="nav nav-tabs tabs-3" style="
                                                 position: relative;

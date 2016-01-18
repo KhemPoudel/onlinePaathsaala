@@ -65,7 +65,7 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                 <li><a class="collapsible-header waves-effect active">Contents</a>
                 </li>
 
-                <li><a class="collapsible-header waves-effect" id="wishlist">WishList</a>
+                <li><a class="collapsible-header waves-effect" data-id="<?=\Yii::$app->user->identity->getId()?>" id="wishlist">WishList</a>
                 </li>
 
                 <!--<li><a class="collapsible-header waves-effect">Dropdown menu</a>
@@ -133,10 +133,14 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                         </p>
                         <?php
                         $profile_btn_class='';
-                        if ($id!=\Yii::$app->user->identity->getId()):
-                            $profile_btn_class='hidden';
-                        endif; ?>
-                        <a href="<?php echo Url::toRoute('/user/admin/updatefromuser').'?id='. $id;?>">
+                        $url=Url::toRoute('/user/admin/updatefromuser').'?id='. $id;
+                        if ($id!=\Yii::$app->user->identity->getId())
+                        {
+                            $profile_btn_class='disabled';
+                            $url='#';
+                        }
+                        ?>
+                        <a href="<?php echo $url;?>">
                             <button class="btn btn-border-info btn-block <?= $profile_btn_class?>"><span class="fa fa-user"></span> View Profile </button>
                         </a>
                     </div>
@@ -148,11 +152,20 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                             </strong>
                         </p>
                         <?php
+                        $follow_status='Unfollow';
+                        $btn_follow='<i class="fa fa-minus-circle"></i>  Unfollow';
                         $follow_btn_class='';
-                        if ($id==\Yii::$app->user->identity->getId()):
-                            $follow_btn_class='';
-                        endif; ?>
-                        <button style="margin-top: -3.1%;" class="btn btn-border-success btn-block <?= $follow_btn_class?>"><span class="fa fa-plus-circle"></span> Follow </button>
+                        if(count(\common\models\FollowerUsertoUser::find()->where(['followed_user_id'=>$id,'follower_user_id'=>\Yii::$app->user->identity->getId()])->all())==0) {
+                            $follow_status = 'Follow';
+                            $btn_follow='<i class="fa fa-user-plus"></i>  Follow';
+                        }
+                        if ($id==\Yii::$app->user->identity->getId())
+                            $follow_btn_class='disabled';
+                        ?>
+                        <button type="button" style="margin-top: -3.5%;" class="btn btn-border-success btn-block btn-follow <?=$follow_btn_class?>" id="<?php echo $id?>" data-id="<?php echo $id?>" data-follow-status="<?php echo $follow_status?>">
+                            <span id="span-<?php echo $id;?>"><?= $btn_follow?></span>
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -213,7 +226,7 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                         <a data-toggle="tab" href="#img-tab">Images</a>
                     </li>
                 </ul>
-                <div class="tab-content" >
+                <div class="tab-content" id="tab-content-<?=\Yii::$app->user->identity->getId()?>">
                     <?= $this->render('_profileContents',['model_videos'=>$model_videos,'model_pdf'=>$model_pdf,'model_img'=>$model_img])?>
                 </div>
             </div>
@@ -226,11 +239,46 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
 $js = <<<JS
     $('#wishlist').on('click',function(){
        //alert('ok');
-       $(".tab-content").html('<img src="http://localhost/onlinePaathsaala/frontend/web/images/loader1.gif">');
+       var id=$(this).attr('data-id');
+       alert(id);
+       $("#tab-content-"+id).html('<img src="http://localhost/onlinePaathsaala/frontend/web/images/loader1.gif">');
        $.get("profile/getwishlist", function(data)
        {
-        $(".tab-content").html(data);
+        $("#tab-content-"+id).html(data);
        });
     });
+    $('.btn-follow').on('click', function(e) {
+            e.preventDefault();
+            var id=$(this).attr('data-id');
+            var follow_status=$(this).attr('data-follow-status');
+            var data = {'followed_id':id,'follow_status':follow_status};
+            alert(id);
+            $.ajax({
+                url:'/onlinePaathsaala/frontend/web/index.php/follow/addfollower',
+                dataType:"json",
+                type:'post',
+                data: data,
+                success: function(response) {
+                    console.log(response);
+                    if(response>=0)
+                    {
+                    if(response=='0')
+                    {
+                        $('#span-'+id).html('<i class="fa fa-minus-circle"></i> Unfollow');
+                        $('#'+id).attr('data-follow-status','Unfollow');
+                    }
+
+                    else{
+                            $('#span-'+id).html('<i class="fa fa-user-plus"></i> Follow');
+                            $('#'+id).attr('data-follow-status','Follow');
+                    }
+                    }
+                },
+                error: function(xhr,status,err){
+                console.log(status);
+                console.log(err);
+                }
+            });
+        });
 JS;
 $this->registerJs($js);

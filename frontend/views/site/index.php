@@ -69,41 +69,41 @@ $this->title = 'Timeline';
 
                 <span class="label green">
                     <strong>
-                    <?php
+                        <?php
                         $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
-                        echo $topic->name;
-                    ?>
+                        $course=\common\models\course\CourseRecord::findOne($topic->course_id);
+                        $program=\common\models\program\ProgramRecord::findOne($course->program_id);
+                        $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
+                        $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
+                        echo Html::a($topic->name,['content/index','topic_id'=>$topic->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name,'course'=>$course->name],['style'=>'color:black;']);
+                        ?>
                     </strong>
                 </span>
                 <span class="label blue">
                     <strong>
                         <?php
-                            $course=\common\models\course\CourseRecord::findOne($topic->course_id);
-                            echo $course->name;
+                        echo Html::a($course->name,['topic/index','course_id'=>$course->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name],['style'=>'color:black;']);
                         ?>
                     </strong>
                 </span>
                 <span class="label blue-grey">
                     <strong>
                         <?php
-                            $program=\common\models\program\ProgramRecord::findOne($course->program_id);
-                            echo $program->name;
+                        echo Html::a($program->name,['course/index','program_id'=>$program->id,'university'=>$univ->name,'faculty'=>$faculty->name],['style'=>'color:black;']);
                         ?>
                     </strong>
                 </span>
                 <span class="label default-color">
                     <strong>
                         <?php
-                            $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
-                            echo $faculty->name;
+                        echo Html::a($faculty->name,['program/index','faculty_id'=>$faculty->id,'university'=>$univ->name],['style'=>'color:black;']);
                         ?>
                     </strong>
                 </span>
                 <span class="label orange">
                     <strong>
                         <?php
-                            $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
-                            echo $univ->name;
+                        echo Html::a($univ->name,['faculty/index','university_id'=>$univ->id],['style'=>'color:black;']);
                         ?>
                     </strong>
                 </span>
@@ -152,7 +152,7 @@ $js = <<<JS
             //console.log(data);
             //alert(status);
             $.ajax({
-                url:'addwish',
+                url:'/onlinePaathsaala/frontend/web/index.php/site/addwish',
                 dataType:"json",
                 type:'post',
                 data: data,

@@ -28,9 +28,8 @@ use yii\helpers\Html;
             <div class="card-noborder hoverable" id="content-div-<?=$model->id;?>">
                 <div class="view overlay hm-white-slight">
                     <video id="video" width="100%" height="100%" class="video-class" controls>
-                        <source src="<?=Url::base()?>/assets/Uploads/<?= $model->name?>" type="video/<?=$model->ext?>">
+                        <source src="<?=Url::base()?>/assets/Uploads/<?= $model->address?>" type="video/<?=$model->ext?>">
                     </video>
-                    <div class="mask waves-effect waves-light"> </div>
                 </div>
                 <div class="card-content">
                     <p>
@@ -51,45 +50,46 @@ use yii\helpers\Html;
                         <li><i class="fa fa-comment-o"> </i><?=$this->context->getCommentsCount($model);?></li>
                     </ul>
                     <p>
-                        <span class="label green">
-                            <strong>
-                                <?php
-                                $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
-                                echo $topic->name;
-                                ?>
-                            </strong>
+                        <span class="label label-green">
+                        <strong>
+                            <?php
+                            $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
+                            $course=\common\models\course\CourseRecord::findOne($topic->course_id);
+                            $program=\common\models\program\ProgramRecord::findOne($course->program_id);
+                            $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
+                            $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
+                            echo Html::a($topic->name,['/content/index','topic_id'=>$topic->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name,'course'=>$course->name],['style'=>'color:black;']);
+                            ?>
+                        </strong>
                         </span>
-                        <span class="label blue">
-                            <strong>
-                                <?php
-                                $course=\common\models\course\CourseRecord::findOne($topic->course_id);
-                                echo $course->name;
-                                ?>
-                            </strong>
-                        </span>
-                        <span class="label blue-grey">
-                            <strong>
-                                <?php
-                                $program=\common\models\program\ProgramRecord::findOne($course->program_id);
-                                echo $program->name;
-                                ?>
-                            </strong>
-                        </span>
-                        <span class="label default-color">
-                            <strong>
-                                <?php
-                                $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
-                                echo $faculty->name;
-                                ?>
-                            </strong>
-                        </span>
-                        <span class="label orange"><strong>
-                                <?php
-                                $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
-                                echo $univ->name;
-                                ?>
-                            </strong>
-                        </span>
+                <span class="label blue">
+                    <strong>
+                        <?php
+                        echo Html::a($course->name,['/topic/index','course_id'=>$course->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label blue-grey">
+                    <strong>
+                        <?php
+                        echo Html::a($program->name,['/course/index','program_id'=>$program->id,'university'=>$univ->name,'faculty'=>$faculty->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label default-color">
+                    <strong>
+                        <?php
+                        echo Html::a($faculty->name,['/program/index','faculty_id'=>$faculty->id,'university'=>$univ->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label orange">
+                    <strong>
+                        <?php
+                        echo Html::a($univ->name,['/faculty/index','university_id'=>$univ->id],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
                     </p>
                 </div>
             </div>
@@ -134,10 +134,9 @@ use yii\helpers\Html;
             <!--Featured card-->
             <div class="card-noborder hoverable" id="content-div-<?=$model->id;?>">
                 <div class="view overlay hm-white-slight">
-                    <a href=<?php echo Url::base() . '/assets/Uploads/' . $model->name;?> target='_blank'>
+                    <a href=<?php echo Url::base() . '/assets/Uploads/' . $model->address;?> target='_blank'>
                         <?= Html::img('@web/images/pdf_thumbnail.png',['class'=>"img-responsive"])?>
                     </a>
-                    <div class="mask waves-effect waves-light"> </div>
                 </div>
 
                 <div class="card-content">
@@ -159,46 +158,46 @@ use yii\helpers\Html;
                     </ul>
 
                     <p>
-                                                <span class="label green">
-                                                    <strong>
-                                                        <?php
-                                                        $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
-                                                        echo $topic->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label blue">
-                                                    <strong>
-                                                        <?php
-                                                        $course=\common\models\course\CourseRecord::findOne($topic->course_id);
-                                                        echo $course->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label blue-grey">
-                                                    <strong>
-                                                        <?php
-                                                        $program=\common\models\program\ProgramRecord::findOne($course->program_id);
-                                                        echo $program->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label default-color">
-                                                    <strong>
-                                                        <?php
-                                                        $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
-                                                        echo $faculty->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label orange">
-                                                    <strong>
-                                                        <?php
-                                                        $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
-                                                        echo $univ->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
+                                                <span class="label label-green">
+                        <strong>
+                            <?php
+                            $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
+                            $course=\common\models\course\CourseRecord::findOne($topic->course_id);
+                            $program=\common\models\program\ProgramRecord::findOne($course->program_id);
+                            $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
+                            $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
+                            echo Html::a($topic->name,['/content/index','topic_id'=>$topic->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name,'course'=>$course->name],['style'=>'color:black;']);
+                            ?>
+                        </strong>
+                        </span>
+                <span class="label blue">
+                    <strong>
+                        <?php
+                        echo Html::a($course->name,['/topic/index','course_id'=>$course->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label blue-grey">
+                    <strong>
+                        <?php
+                        echo Html::a($program->name,['/course/index','program_id'=>$program->id,'university'=>$univ->name,'faculty'=>$faculty->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label default-color">
+                    <strong>
+                        <?php
+                        echo Html::a($faculty->name,['/program/index','faculty_id'=>$faculty->id,'university'=>$univ->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label orange">
+                    <strong>
+                        <?php
+                        echo Html::a($univ->name,['/faculty/index','university_id'=>$univ->id],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
                     </p>
                 </div>
             </div>
@@ -246,11 +245,10 @@ use yii\helpers\Html;
                 <div class="view overlay hm-white-slight" style="width: 300px;
                 height: 200px;
                  overflow: hidden;">
-                        <?= Html::img('@web/assets/Uploads/'.$model->name,['class'=>"img-responsive",'style'=>' position: relative;
+                        <?= Html::img('@web/assets/Uploads/'.$model->address,['class'=>"img-responsive",'style'=>' position: relative;
                             float: left;
                             width:  380px;
                             height: 189px;'])?>
-                    <div class="mask waves-effect waves-light"> </div>
                 </div>
 
                 <div class="card-content">
@@ -271,46 +269,46 @@ use yii\helpers\Html;
                         <li><i class="fa fa-comment-o"> </i><?=$this->context->getCommentsCount($model);?></li>
                     </ul>
                     <p>
-                                                <span class="label green">
-                                                    <strong>
-                                                        <?php
-                                                        $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
-                                                        echo $topic->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label blue">
-                                                    <strong>
-                                                        <?php
-                                                        $course=\common\models\course\CourseRecord::findOne($topic->course_id);
-                                                        echo $course->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label blue-grey">
-                                                    <strong>
-                                                        <?php
-                                                        $program=\common\models\program\ProgramRecord::findOne($course->program_id);
-                                                        echo $program->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label default-color">
-                                                    <strong>
-                                                        <?php
-                                                        $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
-                                                        echo $faculty->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
-                                                <span class="label orange">
-                                                    <strong>
-                                                        <?php
-                                                        $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
-                                                        echo $univ->name;
-                                                        ?>
-                                                    </strong>
-                                                </span>
+                                                <span class="label label-green">
+                        <strong>
+                            <?php
+                            $topic=\common\models\topic\TopicRecord::findOne($model->topic_id);
+                            $course=\common\models\course\CourseRecord::findOne($topic->course_id);
+                            $program=\common\models\program\ProgramRecord::findOne($course->program_id);
+                            $faculty=\common\models\faculty\FacultyRecord::findOne($program->faculty_id);
+                            $univ=\common\models\university\UniversityRecord::findOne($faculty->university_id);
+                            echo Html::a($topic->name,['/content/index','topic_id'=>$topic->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name,'course'=>$course->name],['style'=>'color:black;']);
+                            ?>
+                        </strong>
+                        </span>
+                <span class="label blue">
+                    <strong>
+                        <?php
+                        echo Html::a($course->name,['/topic/index','course_id'=>$course->id,'university'=>$univ->name,'faculty'=>$faculty->name,'program'=>$program->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label blue-grey">
+                    <strong>
+                        <?php
+                        echo Html::a($program->name,['/course/index','program_id'=>$program->id,'university'=>$univ->name,'faculty'=>$faculty->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label default-color">
+                    <strong>
+                        <?php
+                        echo Html::a($faculty->name,['/program/index','faculty_id'=>$faculty->id,'university'=>$univ->name],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
+                <span class="label orange">
+                    <strong>
+                        <?php
+                        echo Html::a($univ->name,['/faculty/index','university_id'=>$univ->id],['style'=>'color:black;']);
+                        ?>
+                    </strong>
+                </span>
                     </p>
                 </div>
             </div>
