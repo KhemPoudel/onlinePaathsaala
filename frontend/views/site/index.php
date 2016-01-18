@@ -7,7 +7,13 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 $this->title = 'Timeline';
 ?>
-
+<div class="col-md-12 blog-column" style="margin-top: 5.8%;">
+    <div class="card-panel bl-panel text-center hoverable">
+        <?php
+            echo $this->render('_upload');
+        ?>
+        </div>
+    </div>
     <?php
     foreach($models as $model)
     {
@@ -22,7 +28,7 @@ $this->title = 'Timeline';
                 <h6>Added by
                     <a href="#"><?= \dektrium\user\models\User::findOne(['id'=>$model->uploadedBy])->username?>
                     </a>
-                    | 21.10.2015
+                    | <?=Yii::t('user', '{0, date}', $model->posted_at);?>
                 </h6>
                 <hr>
                 <div class="" style="padding-left:">
@@ -34,7 +40,7 @@ $this->title = 'Timeline';
                             ?>
                             <p class="text-center">
                                 <video id="video" width="80%" height="80%" poster="" controls>
-                                    <source src="<?=Url::base()?>/assets/Uploads/<?= $model->name?>" type="video/<?=$model->ext?>">
+                                    <source src="<?=Url::base()?>/assets/Uploads/<?= $model->address?>" type="video/<?=$model->ext?>">
                                 </video>
                             </p>
                         <?php
@@ -42,8 +48,8 @@ $this->title = 'Timeline';
                         elseif($model->type=='pdf') {
                             ?>
                             <p class="text-center">
-                                <object data="<?= Url::base() ?>/assets/Uploads/<?= $model->name ?>" type="application/pdf" width="100%" height="360">
-                                    alt : <a href="<?= Url::base() ?> /assets/Uploads/<?= $model->name ?>"><?= $model->name ?></a>
+                                <object data="<?= Url::base() ?>/assets/Uploads/<?= $model->address ?>" type="application/pdf" width="100%" height="360">
+                                    alt : <a href="<?= Url::base() ?> /assets/Uploads/<?= $model->address ?>"><?= $model->name ?></a>
                                 </object>
                             </p>
 
@@ -54,7 +60,7 @@ $this->title = 'Timeline';
                         {
                             ?>
                             <p class="" style="width: 100%;height: 100%;">
-                                <?= Html::img('@web/assets/Uploads/'.$model->name,['class'=>"img-responsive",'style'=>'margin:0 auto;'])?>
+                                <?= Html::img('@web/assets/Uploads/'.$model->address,['class'=>"img-responsive",'style'=>'margin:0 auto;'])?>
                             </p>
 
                          <?php

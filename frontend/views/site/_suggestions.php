@@ -49,7 +49,7 @@ text-transform: uppercase;
 letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
         </ul>
 
-        <div class="tab-content" >
+        <div class="tab-content pre-scrollable" >
             <div id="home" class="tab-pane fade in active">
                 <?php
                 $sugg_models=frontend\controllers\SiteController::suggestionForContentsOnTheBasisOfUserLikesAndDislikes();
@@ -120,10 +120,17 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                             foreach($sugg_models as $model)
                             {
                                 ?>
-                                <a href="">
                                     <div class="row">
                                         <div>
-                                            <h5 class="title"><?=$model->name;?></h5>
+                                            <div class="col-md-8">
+                                                <h5 class="title" style="font-size: 20px;
+                                                                    margin-left: -37%;
+                                                                    margin-top: 10%;"><?=$model->name;?></h5>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="button" class="btn btn-border-default"><i class="fa fa-user-plus"></i> </button>
+                                            </div>
+
                                             <ul class="list-inline item-details">
                                                 <li><i class="fa fa-clock-o"> 05/10/2015</i></li>
                                                 <li><a href="#"><i class="fa fa-comments-o"></i> <?=$model->noOfFollowers;?></a></li>
@@ -132,7 +139,6 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                             </ul>
                                         </div>
                                     </div>
-                                </a>
                                 <?php
                             }
                                 ?>
@@ -158,10 +164,16 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                             foreach($sugg_models as $model)
                             {
                                 ?>
-                                <a href="">
                                     <div class="row">
                                         <div>
-                                            <h5 class="title"><?=$model->username;?></h5>
+                                            <div class="col-md-8">
+                                                <h5 class="title" style="font-size: 20px;
+                                                                    margin-left: -37%;
+                                                                    margin-top: 10%;"><?=$model->username;?></h5>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="button" class="btn btn-border-default"><i class="fa fa-user-plus"></i> </button>
+                                            </div>
                                             <ul class="list-inline item-details">
                                                 <li><i class="fa fa-clock-o"><?=Yii::t('user', '{0, date}', $model->created_at)?></i></li>
                                                 <li>
@@ -190,7 +202,6 @@ letter-spacing: .8px;"><a data-toggle="tab" href="#users">Users</a></li>
                                             </ul>
                                         </div>
                                     </div>
-                                </a>
                                 <?php
                             }
                                 ?>

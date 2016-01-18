@@ -48,7 +48,7 @@ else
                     </span>
                 </button>
                 <button type="button" class="btn btn-mini btn-border-primary">
-                    <?= \yii\helpers\Html::a('<i class="fa fa-download"></i>',['download','filename'=>$model->name],['target'=>'_blank']);?>
+                    <?= \yii\helpers\Html::a('<i class="fa fa-download"></i>',['download','filename'=>$model->address],['target'=>'_blank']);?>
                 </button>
 
             </div>
