@@ -340,7 +340,9 @@ class SiteController extends Controller
             $model->commentedAt=time();
             if($model->save())
             {
+                $profile=\dektrium\user\models\Profile::findOne(['user_id'=>$model->commentedBy]);
                 return [
+                    'image'=>$profile->name,
                     'comment'=>$comment,
                     'commentedOn'=>$commentedOn,
                     'commentedBy'=>User::findOne(['id'=>\Yii::$app->user->identity->getId()])->username,

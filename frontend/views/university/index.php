@@ -22,7 +22,7 @@ use yii\helpers\Html;
                     <div class="col-sm-8">
                         <?php
                             $link_univ='<h5 class="title">'.$model->name.'</h5>';
-                            echo Html::a($link_univ,['/faculty/index','university_id'=>$model->id]);
+                            echo Html::a($link_univ,['/faculty/index','university_id'=>$model->id],['class'=>'click']);
                         ?>
                         <ul class="list-inline item-details">
                             <li><i class="fa fa-clock-o"> 05/10/2015 | </i></li>

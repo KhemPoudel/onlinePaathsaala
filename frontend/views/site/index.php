@@ -8,19 +8,13 @@ use yii\bootstrap\Modal;
 $this->title = 'Timeline';
 ?>
 <div class="col-md-12 blog-column" style="margin-top: 5.8%;">
-    <div class="card-panel bl-panel text-center hoverable">
-        <?php
-            echo $this->render('_upload');
-        ?>
-        </div>
-    </div>
     <?php
     foreach($models as $model)
     {
     ?>
     <div>
         <div class="col-md-12 blog-column" style="margin-top: 5.8%;">
-            <div class="card-panel bl-panel text-center hoverable">
+            <div class="card-panel bl-panel text-center hoverable" style="z-index:auto;">
                 <?php
                 $link_user='<h5 class="black-text">'.$model->name.'<i class="material-icons"></i></h5>';
                 echo Html::a($link_user,['content/viewsingle','id'=>$model->id]);
