@@ -59,14 +59,12 @@ use kartik\file\FileInput;
 <?= $form->field($model,'topic')->dropDownList
 (ArrayHelper::map(app\models\topic\TopicRecord::find()->all(),'id','name'),
     [
-        'prompt'=>'select course',
-        'onchange'=>'
-        $.post("index.php?r=contents/submit&id='.'"+$(this).val());'
+        'prompt'=>'select course','id'=>"topic"
 
 
     ]);?>
+    <?= $form->field($model, 'topic_id')->hiddenInput()->label(false) ?>
 
-<?= $form->field($model,'topic_id')->textInput(['maxlength' => true])?>
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 <?php
 if($label=='image')
@@ -98,3 +96,13 @@ elseif($label=='video'){
 
     <?= Html::a('back',['/contents/store'],['class'=>'btn btn-primary'])?>
 </div>
+<?php
+$script = <<<JS
+$('#topic').change(function(){
+var topic_id=$(this).val();
+$('#contentsrecord-topic_id').attr('value',topic_id);
+});
+JS;
+$this->registerJs($script);
+
+?>

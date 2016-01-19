@@ -12,6 +12,7 @@ use app\models\faculty\FacultyRecord;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 Class ContentsController extends Controller{
 
@@ -160,7 +161,7 @@ public function actionIndex()
             echo "<option value='".$first."'>".'select'."</option>";
             foreach($topics as $topic)
             {
-                echo "<option data-toggle='modal' data-target='#myModal' value='".$topic->id."'>".$topic->name."</option>";
+                echo "<option  value='".$topic->id."'>".$topic->name."</option>";
             }
         }
         else
@@ -170,7 +171,7 @@ public function actionIndex()
     }
     public function actionSubmits($id)
     {
- $topic_id=$id;
+echo "<?= $"."form->field($"."model, 'topic_id')->textInput(['maxlength' => true,'value'=>".$id."]) ?>";
     }
 
 public function actionStore()
