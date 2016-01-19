@@ -61,7 +61,7 @@ use kartik\file\FileInput;
     [
         'prompt'=>'select course',
         'onchange'=>'
-        $.post("index.php?r=contents/submits&id='.'"+$(this).val());'
+        $.post("index.php?r=contents/submit&id='.'"+$(this).val());'
 
 
     ]);?>
