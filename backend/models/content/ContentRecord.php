@@ -29,7 +29,12 @@ class ContentRecord extends \yii\db\ActiveRecord
     public $image;
     public $video;
     public $file;
-    public function rules()
+    public $university;
+    public $faculty;
+    public $program;
+    public $course;
+    public $topic;
+       public function rules()
     {
         return [
             [['name', 'topic_id'], 'required'],
