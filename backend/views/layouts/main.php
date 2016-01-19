@@ -25,7 +25,7 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
             NavBar::begin([
-                'brandLabel' => 'My Company',
+                'brandLabel' => 'OnlinePaathsaala',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -33,10 +33,8 @@ AppAsset::register($this);
             ]);
 
         $navItems=[
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Status', 'url' => ['/status/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']]
+            ['label' => 'Home', 'url' => ['university/front']],
+
         ];
         if (Yii::$app->user->isGuest) {
             array_push($navItems,['label' => 'Sign In', 'url' => ['/user/login']],['label' => 'Sign Up', 'url' => ['/user/register']]);
