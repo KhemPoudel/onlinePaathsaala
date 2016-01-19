@@ -73,11 +73,21 @@ class ContentController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $imageName=$model->name;
             //get the instance of uploaded file
-
+            $target=md5(uniqid());
             $model->$label=UploadedFile::getInstance($model,$label);
-            $model->$label->saveAs('uploads/'.$imageName.'.'.$model->$label->extension);
+            $model->$label->saveAs('uploads/'.$target.'.'.$model->$label->extension);
 // save the path in db
-            $model->address='uploads/'.$imageName.'.'.$model->$label->extension;
+            $model->name=$imageName.'.'.$model->$label->extension;
+            $model->address=$target.'.'.$model->$label->extension;
+            $model->ext=$model->$label->extension;
+            $model->uploadedBy=Yii::$app->user->identity->getId();
+            if($model->ext=='jpg'||$model->ext=='jpeg'||$model->ext=='gif'||$model->ext=='png')
+                $model->type='img';
+            elseif($model->ext=='pdf')
+                $model->type='pdf';
+            else
+                $model->type='video';
+            $model->posted_at=time();
             $model->save();
 
 

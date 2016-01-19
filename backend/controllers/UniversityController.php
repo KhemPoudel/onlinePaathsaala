@@ -31,9 +31,9 @@ class UniversityController extends Controller
                         'actions' => ['index', 'create', 'update', 'delete', 'block', 'confirm','front'],
                         'allow' => true,
                         'roles' => ['@'],
-                        //'matchCallback' => function ($rule, $action) {
-                          //  return \Yii::$app->user->identity->getIsAdmin();
-                       // }
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->getIsAdmin();
+                        }
                     ],
                 ]
             ]
