@@ -10,7 +10,7 @@ use kartik\file\FileInput;
 ?>
 
 <div class="well col-lg-6">
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
    <?= $form->field($model,'university')->dropDownList
 (ArrayHelper::map(app\models\university\UniversityRecord::find()->all(),'id','name'),
     [

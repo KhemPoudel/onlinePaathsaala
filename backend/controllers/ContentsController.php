@@ -53,6 +53,30 @@ return ArrayHelper::map(FacultyRecord::find()->where(['university_id'=>$id])
         echo Json::encode(['output'=>'', 'selected'=>'']);
 
     }
+    public function actionCreate($label)
+    {
+        $model = new ContentRecord();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $imageName=$model->name;
+            //get the instance of uploaded file
+
+            $model->$label=UploadedFile::getInstance($model,$label);
+            $model->$label->saveAs('uploads/'.$imageName.'.'.$model->$label->extension);
+// save the path in db
+            $model->address='uploads/'.$imageName.'.'.$model->$label->extension;
+            $model->save();
+
+
+            return $this->redirect(['content/view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+                'label'=>$label,
+
+            ]);
+        }
+    }
 
 public function actionIndex()
 {
@@ -62,20 +86,40 @@ public function actionIndex()
     public function actionChoose($label)
     {
         $model = new ContentsRecord();
+        $database= new ContentRecord();
         if ($model->load(Yii::$app->request->post()))
         {
-
-            $imageName=$model->name;
+if($label=='pdf')
+{
+    $lbl='pdf';
+$database->name=$model->name;
+    $database->$lbl=$model->$label;
+    $database->topic_id=$model->topic_id;
+}
+elseif($label=='image')
+{
+    $lbl='image';
+    $database->name=$model->name;
+    $database->$lbl=$model->$label;
+    $database->topic_id=$model->topic_id;
+}
+            else
+            {
+                $lbl='video';
+                $database->name=$model->name;
+                $database->$lbl=$model->$label;
+                $database->topic_id=$model->topic_id;
+            }
+            $imageName=$database->name;
             //get the instance of uploaded file
 
-            $model->$label=UploadedFile::getInstance($model,$label);
-            $model->$label->saveAs('uploads/'.$imageName.'.'.$model->$label->extension);
+            $database->file=UploadedFile::getInstance($database,$lbl);
+            $database->file->saveAs('/uploads/'.$imageName.'.'.$database->$lbl->extension);
 // save the path in db
-            $db=new ContentRecord();
 
-            $db->name=$imageName;
-            $db->address='uploads/'.$imageName.'.'.$model->$label->extension;
-            $db->save();
+
+            $database->address='uploads/'.$imageName.'.'.$database->$lbl->extension;
+            $database->save();
         }
         else {
             return $this->render('choose', [
