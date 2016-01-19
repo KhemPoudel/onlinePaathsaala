@@ -19,7 +19,7 @@ use kartik\file\FileInput;
 if($label=='image')
 {
     echo $form->field($model, 'topic_id')->textInput(['value'=>$topic_id]);
-       echo $form->field($model, $l)->widget(FileInput::classname(), [
+       echo $form->field($model, $label)->widget(FileInput::classname(), [
     'options'=>['accept'=>$label.'/*'],
     'pluginOptions'=>['allowedFileExtensions'=>['jpg','gif','png']]]);
 }

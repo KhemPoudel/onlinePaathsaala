@@ -34,3 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+<div class="form-group">
+    <?= Html::a('back',['/content/index'],['class'=>'btn btn-primary'])?>
+</div>
