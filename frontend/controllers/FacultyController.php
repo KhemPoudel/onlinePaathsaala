@@ -34,5 +34,6 @@ class FacultyController extends Controller
     {
         $models=FacultyRecord::findAll(['university_id'=>$university_id]);
         return $this->render('index',['models'=>$models,'university_id'=>$university_id]);
+
     }
 }

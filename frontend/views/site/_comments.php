@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Html;
+?>
 <div id="post-div-<?php echo $id;?>" class="pre-scrollable">
     <div class="card-panel horizontal-listing comments-section">
         <?php
@@ -5,9 +8,13 @@
             {?>
                 <div class="row hoverable">
                     <div class="col-sm-2">
-                        <img src="http://mdbootstrap.com/wp-content/uploads/2015/10/avatar-1.jpg" class="img-responsive img-circle z-depth-">
+                        <?php
+                        //$user=\dektrium\user\models\User::findOne($model->commentedBy);
+                        $profile=\dektrium\user\models\Profile::findOne(['user_id'=>$model->commentedBy]);
+                        ?>
+                        <?=Html::img('@web/images/'.$profile->name,['class'=>'z-depth-1','style'=>'width:132%;height:103px;'])?>
                     </div>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding-left: 32px;">
                         <a href="#">
                             <h6 class="title"><?php echo \dektrium\user\models\User::findOne(['id'=>$model->commentedBy])->username;?>
                             </h6>
@@ -56,12 +63,12 @@ $js = <<<JS
                     $('#post-div-'+response.commentedOn).prepend(
                     '<div class="row hoverable">'+
                     '<div class="col-sm-2">'+
-                        '<img src="http://mdbootstrap.com/wp-content/uploads/2015/10/avatar-1.jpg" class="img-responsive img-circle z-depth-">'+
+                        '<img src="/onlinePaathsaala/frontend/web/images/'+response.image+'" class="z-depth-1" style="width:94%;height:90px;">'+
                     '</div>'+
                     '<div class="col-sm-10">'+
                         '<a href="#">'+
-                            '<h5 class="title">'+response.commentedBy+
-                            '</h5>'+
+                            '<h6 class="title">'+response.commentedBy+
+                            '</h6>'+
                         '</a>'+
                         '<i class="fa fa-clock-o">'+response.commentedAt+'</i>'+
                         '<p>'+

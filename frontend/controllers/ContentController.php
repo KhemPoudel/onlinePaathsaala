@@ -1,5 +1,4 @@
 <?php
-
 namespace frontend\controllers;
 
 use common\models\CommentsContent;
@@ -56,7 +55,7 @@ class ContentController extends Controller
         $profile_videos=ContentRecord::find()->where(['topic_id'=>$topic_id,'type'=>'video'])->all();
         $profile_pdf=ContentRecord::find()->where(['topic_id'=>$topic_id,'type'=>'pdf'])->all();
         $profile_img=ContentRecord::find()->where(['topic_id'=>$topic_id,'type'=>'img'])->all();
-        $topic=TopicRecord::findOne($topic_id)->name;
+        $topic=TopicRecord::findOne($topic_id);
         return $this->render('index',['topic'=>$topic,'model_videos'=>$profile_videos,'model_pdf'=>$profile_pdf,'model_img'=>$profile_img]);
     }
 
@@ -219,7 +218,7 @@ class ContentController extends Controller
         return $this->render('upload');
     }
 
-    public function actionCreate()
+    public function actionCreate($topic_id)
     {
 
     if ( 0 < $_FILES['file']['error'] ) {
@@ -231,11 +230,11 @@ class ContentController extends Controller
     }
     else {
         $ext = end((explode(".",$_FILES['file']['name'])));
-        if($ext=='mp4'||$ext='webm'||$ext='flv'||$ext='3gp')
+        if($ext=='mp4'||$ext=='webm'||$ext=='flv'||$ext=='3gp')
             $type='video';
         elseif($ext=='pdf')
             $type='pdf';
-        elseif($ext='jpeg'||$ext=='jpg'||$ext=='gif'||$ext=='png')
+        elseif($ext=='jpg'||$ext=='jpeg'||$ext=='gif'||$ext=='png')
             $type='img';
         else
         {
@@ -250,7 +249,7 @@ class ContentController extends Controller
             $model->ext=$ext;
             $model->uploadedBy=\Yii::$app->user->identity->getId();
             $model->type=$type;
-            $model->topic_id=9;
+            $model->topic_id=$topic_id;
             $model->address=$target.'.'.$ext;
             $model->posted_at=time();
             if(User::findOne($model->uploadedBy)->role==10)
@@ -262,7 +261,7 @@ class ContentController extends Controller
             else
             {
                 unlink(getcwd().'/assets/Uploads/'.$target.'.'.$ext);
-                echo json_encode(['error'=>'Could not save file']);
+                echo json_encode(['error'=>$target.'.'.$ext]);
             }
         }
         else

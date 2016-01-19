@@ -1,5 +1,8 @@
-<div class="card-panel bl-panel text-center hoverable" style="margin-left: 0%;margin-right: 0%;margin-top: 10%;">
-    <h5><?=$topic?></h5>
+<div class="card-panel bl-panel text-center hoverable search-class" style="margin-top: 1%;">
+    <h5><?=$topic->name?></h5>
+    <?php
+    echo $this->render('_upload',['topic_id'=>$topic->id]);
+    ?>
     <hr>
     <ul class="nav nav-tabs tabs-3" style="
                                                 position: relative;

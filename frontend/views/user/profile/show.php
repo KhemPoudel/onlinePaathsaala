@@ -12,13 +12,14 @@
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use kartik\widgets\FileInput;
 
 /**
  * @var \yii\web\View $this
  * @var \dektrium\user\models\Profile $profile
  */
 
-$this->title = empty($profile->name) ? Html::encode($profile->user->username) : Html::encode($profile->name);
+$this->title = empty($profile->name) ? Html::encode($profile->user->username) : Html::encode($profile->user->username);
 ?>
 <div class="">
         <div class="col-md-3" style="margin-right: -5%;">
@@ -29,21 +30,37 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
 
             <!-- Logo -->
             <a href="#" class="waves-effect waves-light avatar-wrapper" style="background-image: url('http://localhost/onlinePaathsaala/frontend/web/images/logo-bg.jpg');)">
-                <img src="http://localhost/onlinePaathsaala/frontend/web/images/video_thumbnail.jpg" style="text-shadow: none; font-size: 80px; color: rgb(255, 255, 255); height: 107px; width: 107px; line-height: 107px; border-radius: 50%; text-align: center; background-color: rgb(16, 36, 51);">
+
             </a>
             <!--/. Logo -->
 
             <div class="about-me text-center">
-                <p>
+                <p id="about">
                     <?php if(!empty($profile->bio)):?>
-                        <?php //Html::encode($profile->bio);
-                        echo 'dasddd';?>
+                        <p>
+                            <?=$profile->bio?>
+
+                        </p>
                     <?php endif;?>
                     <?php if(empty($profile->bio)):?>
                         <span class="text-center"> Bio Not Available</span>
                     <?php endif;?>
                 </p>
             </div>
+                <?php if($profile->user->id==\Yii::$app->user->identity->getId()):?>
+                    <div class="social-sec">
+                        <p id="">
+                            <i class="fa fa-edit" id="edit-bio"></i>
+                            <i class="fa fa-close" id="close-bio"></i>
+                            <i class="fa fa-upload" id="submit-bio"></i>
+                        </p>
+                    </div>
+                <?php endif;?>
+                <div class="social-sec">
+                    <p id="edit-box">
+
+                    </p>
+                </div>
             <!--Social icons-->
             <div class="social-sec">
                 <ul class="list-inline text-center">
@@ -52,6 +69,7 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                     <li><a class="btn-floating btn-small gplus-bg waves-effect waves-light"><i class="fa fa-google-plus"> </i></a></li>
                 </ul>
             </div>
+
             <!--/.Social icons-->
 
             <!-- AboutMe -->
@@ -91,7 +109,33 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                 <div class="row center-on-small-only">
                     <!--Avatar-->
                     <div class="col-sm-3 ">
-                        <?=Html::img('@web/images/khem.jpg',['class'=>'img-responsive','style'=>"text-shadow: none; font-size: 80px; color: rgb(255, 255, 255); height: 136px; width: 136px; line-height: 136px; border-radius: 50%; text-align: center; background-color: rgb(12, 27, 38);"])?>
+                        <?=Html::img('@web/images/'.$profile->name,['class'=>'img-responsive','style'=>"text-shadow: none; font-size: 80px; color: rgb(255, 255, 255); height: 136px; width: 136px; line-height: 136px; border-radius: 50%; text-align: center; background-color: rgb(12, 27, 38);",'data-toggle'=>'modal' ,'data-target'=>'#myModal'])?>
+                    </div>
+                    <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Upload Profile Picture</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <?php
+                                    echo FileInput::widget([
+                                        'name'=>'file',
+                                        'options'=>[
+                                            'multiple'=>true,
+                                        ],
+                                        'pluginOptions'=>[
+                                            'uploadUrl'=>\yii\helpers\Url::to('/onlinePaathsaala/frontend/web/index.php/user/admin/updatefromuser')
+                                        ]
+                                    ]);
+                                    ?>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                     <!--/.Avatar-->
 
@@ -131,26 +175,15 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                                 <small> Followings</small>
                             </strong>
                         </p>
-                        <?php
-                        $profile_btn_class='';
-                        $url=Url::toRoute('/user/admin/updatefromuser').'?id='. $id;
-                        if ($id!=\Yii::$app->user->identity->getId())
-                        {
-                            $profile_btn_class='disabled';
-                            $url='#';
-                        }
-                        ?>
-                        <a href="<?php echo $url;?>">
-                            <button class="btn btn-border-info btn-block <?= $profile_btn_class?>"><span class="fa fa-user"></span> View Profile </button>
-                        </a>
                     </div>
                     <div class="col-sm-6">
                         <p>
-                            <strong>
+                            <strong class="col-sm-6">
                                 <?= Html::a($followed_programs->count(), ['/follow/followedprograms','id'=>$id])?>
                                 <small> Programs</small>
                             </strong>
                         </p>
+
                         <?php
                         $follow_status='Unfollow';
                         $btn_follow='<i class="fa fa-minus-circle"></i>  Unfollow';
@@ -162,11 +195,14 @@ $this->title = empty($profile->name) ? Html::encode($profile->user->username) : 
                         if ($id==\Yii::$app->user->identity->getId())
                             $follow_btn_class='disabled';
                         ?>
-                        <button type="button" style="margin-top: -3.5%;" class="btn btn-border-success btn-block btn-follow <?=$follow_btn_class?>" id="<?php echo $id?>" data-id="<?php echo $id?>" data-follow-status="<?php echo $follow_status?>">
-                            <span id="span-<?php echo $id;?>"><?= $btn_follow?></span>
-                        </button>
+                        <p class="col-sm-6">
+                            <button type="button" style="margin-top: -11%;margin-left:-22px;" class="btn btn-border-success btn-follow <?=$follow_btn_class?>" id="<?php echo $id?>" data-id="<?php echo $id?>" data-follow-status="<?php echo $follow_status?>">
+                                <span id="span-<?php echo $id;?>"><?= $btn_follow?></span>
+                            </button>
+                        </p>
 
                     </div>
+
                 </div>
             </div>
             <!--/.Author box-->
@@ -279,6 +315,25 @@ $js = <<<JS
                 console.log(err);
                 }
             });
+    });
+    $('#edit-bio').on('click',function(){
+        $('#edit-box').html('<textarea id="bio-box"></textarea>');
+    });
+    $('#close-bio').on('click',function(){
+        $('#edit-box').html('asd');
+    });
+    $('#submit-bio').on('click',function(){
+        var bio=$('#bio-box').val();
+        var data={'bio':bio};
+        $.ajax({
+        url:'/onlinePaathsaala/frontend/web/index.php/user/profile/addbio',
+        dataType:"json",
+        type:'post',
+        data: data,
+        success:function(response){
+                ('#about').html('asdad');
+        }
         });
+    });
 JS;
 $this->registerJs($js);
