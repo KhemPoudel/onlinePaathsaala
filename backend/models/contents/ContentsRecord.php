@@ -28,5 +28,19 @@ class ContentsRecord extends Model
     public $file;
     public $name;
     public $topic_id;
+    public function rules()
+    {
+        return [
+            [['name', 'topic_id'], 'required'],
+            [['topic_id'], 'integer'],
+            [['pdf'],'file'],
+            [['image'],'file'],
+            [['video'],'file'],
+            [['file'],'file'],
+            [['name'], 'string', 'max' => 255]
+
+        ];
+    }
+
 
 }
