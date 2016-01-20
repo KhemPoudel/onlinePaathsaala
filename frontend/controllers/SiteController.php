@@ -55,7 +55,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['index','about','contact','update','addcomment','addwish','download'],
+                        'actions' => ['index','about','contact','update','addcomment','addwish','download','notifications'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -629,5 +629,21 @@ class SiteController extends Controller
             }
             return $models;
         }
+    }
+
+    public function actionNotifications()
+    {
+        $user=Yii::$app->user->identity->getId();
+        $userRecord=User::findOne($user);
+        if($userRecord->role==10)
+        {
+            $models=ContentRecord::find()->where(['uploadedBy'=>$user])->all();
+            //$models=$modelsUsers->filterWhere(['flag'=>1])->orWhere(['flag'=>-1]);
+        }
+        else
+            $models=[];
+        return $this->render('/notifications/index', [
+        'models' => $models,
+    ]);
     }
 }

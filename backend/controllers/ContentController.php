@@ -75,7 +75,7 @@ class ContentController extends Controller
             //get the instance of uploaded file
             $target=md5(uniqid());
             $model->$label=UploadedFile::getInstance($model,$label);
-            $model->$label->saveAs('uploads/'.$target.'.'.$model->$label->extension);
+            $model->$label->saveAs('Uploads/'.$target.'.'.$model->$label->extension);
 // save the path in db
             $model->name=$imageName.'.'.$model->$label->extension;
             $model->address=$target.'.'.$model->$label->extension;
@@ -88,6 +88,7 @@ class ContentController extends Controller
             else
                 $model->type='video';
             $model->posted_at=time();
+            $model->flag=1;
             $model->save();
 
 

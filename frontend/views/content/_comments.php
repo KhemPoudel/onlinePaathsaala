@@ -58,9 +58,9 @@ $js = <<<JS
                     $('#post-div-'+response.commentedOn).prepend(
                     '<div class="row hoverable">'+
                     '<div class="col-sm-2">'+
-                        '<img src="http://mdbootstrap.com/wp-content/uploads/2015/10/avatar-1.jpg" class="img-responsive img-circle z-depth-">'+
+                        Uploads+
                     '</div>'+
-                    '<div class="col-sm-10">'+
+      Uploads       '<div class="col-sm-10">'+
                         '<a href="#">'+
                             '<h6 class="title">'+response.commentedBy+
                             '</h6>'+
