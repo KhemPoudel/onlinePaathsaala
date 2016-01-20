@@ -18,7 +18,7 @@ use kartik\file\FileInput;
                 'onchange'=>'
         $.post("index.php?r=contents/lists&id='.'"+$(this).val(),function(data)
         {
-        $("select#contentsrecord-faculty").html(data);
+        $("select#contentrecord-faculty").html(data);
         });'
 
             ]);?>
@@ -29,7 +29,7 @@ use kartik\file\FileInput;
                 'onchange'=>'
         $.post("index.php?r=contents/programs&id='.'"+$(this).val(),function(data)
         {
-        $("select#contentsrecord-program").html(data);
+        $("select#contentrecord-program").html(data);
         });'
 
             ]);?>
@@ -40,7 +40,7 @@ use kartik\file\FileInput;
                 'onchange'=>'
         $.post("index.php?r=contents/courses&id='.'"+$(this).val(),function(data)
         {
-        $("select#contentsrecord-course").html(data);
+        $("select#contentrecord-course").html(data);
         });'
 
             ]);?>
@@ -51,7 +51,7 @@ use kartik\file\FileInput;
                 'onchange'=>'
         $.post("index.php?r=contents/topics&id='.'"+$(this).val(),function(data)
         {
-        $("select#contentsrecord-topic").html(data);
+        $("select#topic").html(data);
         });'
 
             ]);?>
@@ -88,7 +88,9 @@ use kartik\file\FileInput;
         }
         ?>
 
-
+        <div class="form-group">
+            <?= Html::submitButton('save',['create','label'=>$label],['class'=>'btn btn-primary']) ?>
+        </div>
 
         <?php $form= ActiveForm::end(); ?>
 
