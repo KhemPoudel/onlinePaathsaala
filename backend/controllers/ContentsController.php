@@ -62,9 +62,9 @@ return ArrayHelper::map(FacultyRecord::find()->where(['university_id'=>$id])
             //get the instance of uploaded file
 
             $model->$label=UploadedFile::getInstance($model,$label);
-            $model->$label->saveAs('uploads/'.$imageName.'.'.$model->$label->extension);
+            $model->$label->saveAs('Uploads/'.$imageName.'.'.$model->$label->extension);
 // save the path in db
-            $model->address='uploads/'.$imageName.'.'.$model->$label->extension;
+            $model->address='Uploads/'.$imageName.'.'.$model->$label->extension;
             $model->save();
 
 
@@ -114,11 +114,11 @@ elseif($label=='image')
             //get the instance of uploaded file
 
             $database->file=UploadedFile::getInstance($database,$lbl);
-            $database->file->saveAs('/uploads/'.$imageName.'.'.$database->$lbl->extension);
+            $database->file->saveAs('/Uploads/'.$imageName.'.'.$database->$lbl->extension);
 // save the path in db
 
 
-            $database->address='uploads/'.$imageName.'.'.$database->$lbl->extension;
+            $database->address='Uploads/'.$imageName.'.'.$database->$lbl->extension;
             $database->save();
         }
         else {

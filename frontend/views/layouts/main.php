@@ -39,7 +39,7 @@ AppAsset::register($this);
             ['label' => 'Profile', 'url' => ['/user/profile']],
             ['label' => 'Search', 'url' => ['/university/index']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label'=>'Notifications'.Html::tag('span', '10', ['class' => 'label-danger']), 'url'=>['/site/contact']],
+            ['label'=>'Notifications', 'url'=>['/site/notifications']],
         ];
         if (Yii::$app->user->isGuest) {
             array_push($navItems,['label' => 'Sign In', 'url' => ['/user/security/login']],['label' => 'Sign Up', 'url' => ['/user/registration/register']]);

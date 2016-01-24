@@ -81,7 +81,7 @@ use yii\helpers\Html;
                     <a title=<?php echo $model->name;?>>
 
                         <p style="height:  130px;"?>
-                            <?php echo Html::img('@web/assets/uploads/'.$model->name, ['height' => '140px']); ?>
+                            <?php echo Html::img('@web/assets/Uploads/'.$model->name, ['height' => '140px']); ?>
                         </p>
                         <h2><?= $model->name;?></h2>
                     </a>
